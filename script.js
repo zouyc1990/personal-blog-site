@@ -23,8 +23,54 @@ function formatDate(dateString) {
 }
 
 function postMatches(post, query) {
-  const searchable = `${post.title} ${post.category} ${post.excerpt} ${post.body.join(" ")}`;
+  const searchable = [
+    post.title,
+    post.category,
+    post.excerpt,
+    post.quote,
+    post.topThinking,
+    post.deepDive,
+    post.body.join(" ")
+  ].join(" ");
   return searchable.toLowerCase().includes(query.trim().toLowerCase());
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function renderArticleBlock(block) {
+  if (block.type === "heading") {
+    const level = block.level === 2 ? "h3" : "h4";
+    return `<${level} class="article-heading">${escapeHtml(block.text)}</${level}>`;
+  }
+
+  if (block.type === "quote") {
+    return `<blockquote>${escapeHtml(block.text)}</blockquote>`;
+  }
+
+  if (block.type === "list") {
+    const tag = block.ordered ? "ol" : "ul";
+    const items = block.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
+    return `<${tag} class="article-list">${items}</${tag}>`;
+  }
+
+  if (block.type === "code") {
+    const language = block.language ? `<span>${escapeHtml(block.language)}</span>` : "";
+    return `
+      <figure class="code-panel">
+        <figcaption>${language}</figcaption>
+        <pre><code>${escapeHtml(block.text)}</code></pre>
+      </figure>
+    `;
+  }
+
+  return `<p>${escapeHtml(block.text)}</p>`;
 }
 
 function renderPosts() {
@@ -49,6 +95,10 @@ function renderPosts() {
               </div>
               <h3>${post.title}</h3>
               <p>${post.excerpt}</p>
+              <div class="post-signals">
+                <span>顶层：${escapeHtml(post.topThinking || "框架判断")}</span>
+                <span>底层：${escapeHtml(post.deepDive || "技术细节")}</span>
+              </div>
             </div>
             <button class="read-button" type="button" data-post-id="${post.id}">阅读全文</button>
           </div>
@@ -90,7 +140,19 @@ function openPost(post) {
       </div>
       <h2>${post.title}</h2>
       <blockquote>${post.quote}</blockquote>
-      ${post.body.map((paragraph) => `<p>${paragraph}</p>`).join("")}
+      <div class="insight-grid">
+        <section>
+          <span>顶层思维</span>
+          <p>${escapeHtml(post.topThinking || "先判断系统目标、约束和取舍。")}</p>
+        </section>
+        <section>
+          <span>深入底层</span>
+          <p>${escapeHtml(post.deepDive || "再进入协议、数据结构、源码路径和运行时细节。")}</p>
+        </section>
+      </div>
+      <div class="article-content">
+        ${(post.bodyBlocks || []).map(renderArticleBlock).join("")}
+      </div>
     </div>
   `;
   dialog.showModal();
