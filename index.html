@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="永诚手记，一个记录 SRE 理念、AI、算法、编程与 Cloud 最佳实践的个人博客。"
+    />
+    <title>永诚手记 | 个人博客</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <canvas id="ambient-canvas" aria-hidden="true"></canvas>
+
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="永诚手记首页">
+        <span class="brand-mark">Y</span>
+        <span>永诚手记</span>
+      </a>
+      <nav class="nav-links" aria-label="主导航">
+        <a href="#posts">文章</a>
+        <a href="#archive">归档</a>
+        <a href="#about">关于</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-visual" aria-hidden="true">
+          <div class="orbital orbital-one"></div>
+          <div class="orbital orbital-two"></div>
+          <div class="paper-stack">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <div class="signal-card signal-card-one">
+            <strong>42</strong>
+            <span>篇笔记</span>
+          </div>
+          <div class="signal-card signal-card-two">
+            <strong>5</strong>
+            <span>个主题</span>
+          </div>
+        </div>
+
+        <div class="hero-content">
+          <p class="eyebrow">Personal Writing Studio</p>
+          <h1 id="hero-title">永诚手记</h1>
+          <p class="hero-copy">
+            长期记录 SRE 理念、AI、算法、编程和 Cloud 最佳实践，把工程经验沉淀成可复用的方法。
+          </p>
+          <div class="hero-actions">
+            <a class="primary-action" href="#posts">浏览文章</a>
+            <a class="secondary-action" href="#newsletter">订阅更新</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="intro-band" aria-label="站点摘要">
+        <div class="intro-grid">
+          <article>
+            <span>01</span>
+            <h2>系统稳定性</h2>
+            <p>从 SLO、变更治理、告警、复盘到平台工具，讨论可靠性如何真正落地。</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h2>AI 与工程化</h2>
+            <p>关注 Agent、RAG、模型评测和 AI 产品闭环，不停留在演示效果。</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h2>代码与云实践</h2>
+            <p>用算法训练问题结构感，用编程和 Cloud 最佳实践构建可维护系统。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="content-section" id="posts" aria-labelledby="posts-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Latest Essays</p>
+            <h2 id="posts-title">最新文章</h2>
+          </div>
+          <label class="search-box">
+            <span>搜索</span>
+            <input id="search-input" type="search" placeholder="输入关键词" autocomplete="off" />
+          </label>
+        </div>
+
+        <div class="filter-row" role="list" aria-label="文章分类">
+          <button class="filter-pill active" type="button" data-filter="全部">全部</button>
+          <button class="filter-pill" type="button" data-filter="SRE理念">SRE理念</button>
+          <button class="filter-pill" type="button" data-filter="AI">AI</button>
+          <button class="filter-pill" type="button" data-filter="算法">算法</button>
+          <button class="filter-pill" type="button" data-filter="编程">编程</button>
+          <button class="filter-pill" type="button" data-filter="Cloud最佳实践">Cloud最佳实践</button>
+        </div>
+
+        <div class="post-grid" id="post-grid" aria-live="polite"></div>
+        <p class="empty-state" id="empty-state" hidden>没有匹配的文章。</p>
+      </section>
+
+      <section class="feature-band" aria-labelledby="featured-title">
+        <div class="feature-copy">
+          <p class="eyebrow">Featured</p>
+          <h2 id="featured-title">本周推荐</h2>
+          <p>
+            从 SRE 出发重看工程系统：可靠性不是慢下来，而是让高风险动作被自动看见、被稳妥处理。
+          </p>
+        </div>
+        <button class="feature-button" type="button" data-open-featured>阅读全文</button>
+      </section>
+
+      <section class="content-section split-section" id="archive" aria-labelledby="archive-title">
+        <div>
+          <p class="eyebrow">Archive</p>
+          <h2 id="archive-title">写作归档</h2>
+          <div class="timeline" id="timeline"></div>
+        </div>
+        <aside class="topic-panel" aria-labelledby="topics-title">
+          <h2 id="topics-title">常写主题</h2>
+          <div class="topic-list">
+            <span>SRE理念</span>
+            <span>AI</span>
+            <span>算法</span>
+            <span>编程</span>
+            <span>Cloud最佳实践</span>
+          </div>
+        </aside>
+      </section>
+
+      <section class="about-section" id="about" aria-labelledby="about-title">
+        <div class="portrait" aria-hidden="true">
+          <span>Y</span>
+        </div>
+        <div>
+          <p class="eyebrow">About</p>
+          <h2 id="about-title">关于作者</h2>
+          <p>
+            我关注可靠性工程、AI 工程化、算法思维、代码质量和云原生实践。这个博客用于沉淀长期主题，也记录正在发生的项目、阅读和实验。
+          </p>
+        </div>
+      </section>
+
+      <section class="newsletter" id="newsletter" aria-labelledby="newsletter-title">
+        <div>
+          <p class="eyebrow">Newsletter</p>
+          <h2 id="newsletter-title">订阅新文章</h2>
+        </div>
+        <form id="newsletter-form">
+          <label>
+            <span>邮箱</span>
+            <input type="email" name="email" placeholder="you@example.com" required />
+          </label>
+          <button type="submit">订阅</button>
+        </form>
+        <p class="form-message" id="form-message" role="status"></p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>© 2026 永诚手记</span>
+      <a href="#top">回到顶部</a>
+    </footer>
+
+    <dialog class="post-dialog" id="post-dialog">
+      <button class="dialog-close" type="button" aria-label="关闭文章">×</button>
+      <article id="dialog-content"></article>
+    </dialog>
+
+    <script src="./posts.generated.js"></script>
+    <script src="./script.js"></script>
+  </body>
+</html>
