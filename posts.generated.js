@@ -4,26 +4,29 @@ window.BLOG_POSTS = [
     "title": "容器：从镜像构建拆到运行时隔离",
     "category": "容器",
     "date": "2026-05-12",
-    "readTime": "9 min",
-    "excerpt": "快速掌握容器要先理解镜像、进程、网络、存储和安全边界，再用 Dockerfile、Compose 和 Registry 串起交付链路。",
+    "readTime": "14 min",
+    "excerpt": "快速掌握容器要把镜像构建、运行时隔离、网络、存储、安全和发布回滚串成一条真实交付链路。",
     "quote": "顶层看交付标准化，底层看进程、文件系统和网络命名空间。",
     "topThinking": "先把容器当成应用交付单元，建立构建、发布、回滚和安全扫描的标准链路。",
     "deepDive": "拆到 Dockerfile、镜像分层、cgroups、namespaces、bridge 网络、volume、registry 和运行时权限。",
     "body": [
       "顶层思维：容器解决的是交付一致性",
       "容器不是轻量虚拟机，核心价值是把应用、依赖、启动命令和运行约束封装成一个可以重复交付的单元。",
-      "先建立这条主线：",
+      "先建立这条生产链路：",
       "开发环境和生产环境使用同一份镜像",
       "Dockerfile",
       "固化构建步骤，避免人工配置漂移",
       "Registry",
-      "管理版本，发布和回滚都基于不可变镜像标签",
+      "管理版本，发布和回滚都基于不可变镜像",
+      "digest",
       "Compose",
-      "用来理解多服务编排，Kubernetes",
+      "用来理解本地多服务依赖，Kubernetes",
       "用来承接生产调度",
-      "安全扫描、最小权限和非",
+      "SBOM、镜像扫描、非",
       "root",
-      "运行要进入默认流程",
+      "运行和只读文件系统进入默认流程",
+      "日志写",
+      "stdout，配置从环境变量或挂载文件进入容器",
       "底层拆解：容器本质是被隔离的进程",
       "容器启动后，本质上还是宿主机上的进程，只是被",
       "Linux",
@@ -44,6 +47,33 @@ window.BLOG_POSTS = [
       "访问外部网络",
       "volume",
       "把数据生命周期从容器生命周期里拆出来",
+      "capabilities、seccomp、AppArmor/SELinux",
+      "决定容器能调用哪些内核能力",
+      "能力地图",
+      "构建：会写多阶段",
+      "Dockerfile，理解",
+      "build",
+      "context、layer",
+      "cache、`.dockerignore`",
+      "运行：会解释",
+      "entrypoint、cmd、env、healthcheck、restart",
+      "policy",
+      "网络：会排查容器",
+      "DNS、端口映射、bridge",
+      "网络和容器间访问",
+      "存储：会区分",
+      "bind",
+      "mount、named",
+      "volume、临时文件和镜像层写入",
+      "安全：会配置非",
+      "root",
+      "用户、最小权限、镜像扫描和",
+      "secret",
+      "注入",
+      "发布：会用不可变",
+      "tag/digest、回滚策略和",
+      "registry",
+      "权限控制",
       "快速实验清单",
       "写一个多阶段",
       "Dockerfile，把构建环境和运行环境分开",
@@ -66,6 +96,62 @@ window.BLOG_POSTS = [
       "Registry，再用固定",
       "tag",
       "回滚",
+      "排障检查点",
+      "启动失败：先看镜像是否存在、入口命令是否可执行、环境变量是否缺失",
+      "端口不通：确认应用监听地址是",
+      "`0.0.0.0`，再看端口映射和防火墙",
+      "容器频繁退出：查看",
+      "exit",
+      "code、应用日志、healthcheck",
+      "和",
+      "OOM",
+      "事件",
+      "磁盘异常：确认写入位置是不是容器层，生产数据必须放到",
+      "volume",
+      "镜像过大：检查基础镜像、构建缓存、包管理器缓存和调试工具残留",
+      "一个更像生产的",
+      "Dockerfile",
+      "FROM",
+      "node:22-alpine",
+      "AS",
+      "build",
+      "WORKDIR",
+      "/app",
+      "COPY",
+      "package*.json",
+      "./",
+      "RUN",
+      "npm",
+      "ci",
+      "COPY",
+      ".",
+      ".",
+      "RUN",
+      "npm",
+      "run",
+      "build",
+      "FROM",
+      "nginx:1.27-alpine",
+      "COPY",
+      "--from=build",
+      "/app/dist",
+      "/usr/share/nginx/html",
+      "USER",
+      "nginx",
+      "EXPOSE",
+      "8080",
+      "HEALTHCHECK",
+      "CMD",
+      "wget",
+      "-qO-",
+      "http://127.0.0.1:8080/",
+      "||",
+      "exit",
+      "1",
+      "这段配置的重点不是",
+      "Node",
+      "或",
+      "NGINX，而是把构建工具链和运行镜像拆开，减少攻击面，让最终镜像只保留运行所需内容。",
       "官方文档入口",
       "Docker",
       "Docs:",
@@ -93,7 +179,7 @@ window.BLOG_POSTS = [
       },
       {
         "type": "paragraph",
-        "text": "先建立这条主线："
+        "text": "先建立这条生产链路："
       },
       {
         "type": "list",
@@ -101,9 +187,10 @@ window.BLOG_POSTS = [
         "items": [
           "开发环境和生产环境使用同一份镜像",
           "Dockerfile 固化构建步骤，避免人工配置漂移",
-          "Registry 管理版本，发布和回滚都基于不可变镜像标签",
-          "Compose 用来理解多服务编排，Kubernetes 用来承接生产调度",
-          "安全扫描、最小权限和非 root 运行要进入默认流程"
+          "Registry 管理版本，发布和回滚都基于不可变镜像 digest",
+          "Compose 用来理解本地多服务依赖，Kubernetes 用来承接生产调度",
+          "SBOM、镜像扫描、非 root 运行和只读文件系统进入默认流程",
+          "日志写 stdout，配置从环境变量或挂载文件进入容器"
         ]
       },
       {
@@ -127,7 +214,25 @@ window.BLOG_POSTS = [
           "cgroups 限制 CPU、内存、IO 等资源使用",
           "union filesystem 让镜像分层复用，并把运行时写入放在容器层",
           "bridge 网络让容器获得虚拟网卡，再通过 NAT 访问外部网络",
-          "volume 把数据生命周期从容器生命周期里拆出来"
+          "volume 把数据生命周期从容器生命周期里拆出来",
+          "capabilities、seccomp、AppArmor/SELinux 决定容器能调用哪些内核能力"
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "能力地图"
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "构建：会写多阶段 Dockerfile，理解 build context、layer cache、`.dockerignore`",
+          "运行：会解释 entrypoint、cmd、env、healthcheck、restart policy",
+          "网络：会排查容器 DNS、端口映射、bridge 网络和容器间访问",
+          "存储：会区分 bind mount、named volume、临时文件和镜像层写入",
+          "安全：会配置非 root 用户、最小权限、镜像扫描和 secret 注入",
+          "发布：会用不可变 tag/digest、回滚策略和 registry 权限控制"
         ]
       },
       {
@@ -145,6 +250,36 @@ window.BLOG_POSTS = [
           "用 Compose 启动 Web、Redis、PostgreSQL 三个服务",
           "推送镜像到 Registry，再用固定 tag 回滚"
         ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "排障检查点"
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "启动失败：先看镜像是否存在、入口命令是否可执行、环境变量是否缺失",
+          "端口不通：确认应用监听地址是 `0.0.0.0`，再看端口映射和防火墙",
+          "容器频繁退出：查看 exit code、应用日志、healthcheck 和 OOM 事件",
+          "磁盘异常：确认写入位置是不是容器层，生产数据必须放到 volume",
+          "镜像过大：检查基础镜像、构建缓存、包管理器缓存和调试工具残留"
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "一个更像生产的 Dockerfile"
+      },
+      {
+        "type": "code",
+        "language": "dockerfile",
+        "text": "FROM node:22-alpine AS build\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci\nCOPY . .\nRUN npm run build\n\nFROM nginx:1.27-alpine\nCOPY --from=build /app/dist /usr/share/nginx/html\nUSER nginx\nEXPOSE 8080\nHEALTHCHECK CMD wget -qO- http://127.0.0.1:8080/ || exit 1"
+      },
+      {
+        "type": "paragraph",
+        "text": "这段配置的重点不是 Node 或 NGINX，而是把构建工具链和运行镜像拆开，减少攻击面，让最终镜像只保留运行所需内容。"
       },
       {
         "type": "heading",
@@ -173,8 +308,8 @@ window.BLOG_POSTS = [
     "title": "数据库：从数据模型拆到慢查询治理",
     "category": "数据库",
     "date": "2026-05-12",
-    "readTime": "11 min",
-    "excerpt": "快速掌握数据库要从建模、索引、事务和执行计划入手，再进入复制、备份恢复、容量和高可用。",
+    "readTime": "16 min",
+    "excerpt": "快速掌握数据库要从建模、索引、事务和执行计划入手，再进入锁、复制、备份恢复、容量和高可用。",
     "quote": "顶层看数据生命周期，底层看执行计划、锁和日志。",
     "topThinking": "先判断数据的读写模式、一致性要求、增长速度和恢复目标。",
     "deepDive": "拆到索引结构、MVCC、事务隔离、锁等待、WAL/binlog、复制延迟、备份恢复和慢查询计划。",
@@ -202,6 +337,14 @@ window.BLOG_POSTS = [
       "中间结果过大",
       "连接池耗尽，看起来像数据库慢",
       "复制延迟导致读写分离读到旧数据",
+      "能力地图",
+      "建模：实体关系、主键、唯一约束、范式、反范式和审计字段",
+      "查询：执行计划、索引选择、统计信息、排序、聚合和分页",
+      "事务：隔离级别、MVCC、锁等待、死锁、长事务和回滚成本",
+      "高可用：主从复制、复制延迟、故障切换、读写分离一致性",
+      "恢复：全量备份、增量日志、PITR、RPO、RTO",
+      "和恢复演练",
+      "治理：慢查询、容量趋势、归档、分区、权限和脱敏",
       "快速实验清单",
       "对同一条",
       "SQL",
@@ -210,6 +353,26 @@ window.BLOG_POSTS = [
       "开启慢查询日志，按耗时、扫描行数和调用频次排序",
       "做一次全量备份和恢复演练，记录真实恢复时间",
       "模拟主从复制延迟，验证业务是否依赖读后写一致性",
+      "排障检查点",
+      "查询突然变慢：先看执行计划是否变化，再看统计信息、索引和参数绑定",
+      "CPU",
+      "高：看慢查询、排序聚合、连接风暴和缺索引扫描",
+      "锁等待：找阻塞事务、持锁",
+      "SQL、事务年龄和应用是否忘记提交",
+      "连接耗尽：看连接池配置、慢请求、事务占用和空闲连接回收",
+      "复制延迟：看写入峰值、大事务、网络、从库",
+      "IO",
+      "和回放速度",
+      "恢复失败：看备份是否可读、日志是否连续、恢复步骤是否演练过",
+      "慢查询分析顺序",
+      "确认",
+      "SQL、参数、执行时间、扫描行数和返回行数",
+      "查看执行计划，判断是否走了预期索引",
+      "检查过滤条件选择性，联合索引顺序是否匹配查询",
+      "看排序、聚合、join",
+      "是否产生大量中间结果",
+      "回到应用侧，确认连接池、超时、重试和分页方式",
+      "数据库学习最重要的能力不是背语法，而是把业务访问模式翻译成数据结构、事务边界和恢复目标。",
       "官方文档入口",
       "PostgreSQL",
       "Docs:",
@@ -275,6 +438,23 @@ window.BLOG_POSTS = [
       {
         "type": "heading",
         "level": 2,
+        "text": "能力地图"
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "建模：实体关系、主键、唯一约束、范式、反范式和审计字段",
+          "查询：执行计划、索引选择、统计信息、排序、聚合和分页",
+          "事务：隔离级别、MVCC、锁等待、死锁、长事务和回滚成本",
+          "高可用：主从复制、复制延迟、故障切换、读写分离一致性",
+          "恢复：全量备份、增量日志、PITR、RPO、RTO 和恢复演练",
+          "治理：慢查询、容量趋势、归档、分区、权限和脱敏"
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
         "text": "快速实验清单"
       },
       {
@@ -287,6 +467,43 @@ window.BLOG_POSTS = [
           "做一次全量备份和恢复演练，记录真实恢复时间",
           "模拟主从复制延迟，验证业务是否依赖读后写一致性"
         ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "排障检查点"
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "查询突然变慢：先看执行计划是否变化，再看统计信息、索引和参数绑定",
+          "CPU 高：看慢查询、排序聚合、连接风暴和缺索引扫描",
+          "锁等待：找阻塞事务、持锁 SQL、事务年龄和应用是否忘记提交",
+          "连接耗尽：看连接池配置、慢请求、事务占用和空闲连接回收",
+          "复制延迟：看写入峰值、大事务、网络、从库 IO 和回放速度",
+          "恢复失败：看备份是否可读、日志是否连续、恢复步骤是否演练过"
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "慢查询分析顺序"
+      },
+      {
+        "type": "list",
+        "ordered": true,
+        "items": [
+          "确认 SQL、参数、执行时间、扫描行数和返回行数",
+          "查看执行计划，判断是否走了预期索引",
+          "检查过滤条件选择性，联合索引顺序是否匹配查询",
+          "看排序、聚合、join 是否产生大量中间结果",
+          "回到应用侧，确认连接池、超时、重试和分页方式"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "数据库学习最重要的能力不是背语法，而是把业务访问模式翻译成数据结构、事务边界和恢复目标。"
       },
       {
         "type": "heading",
@@ -315,8 +532,8 @@ window.BLOG_POSTS = [
     "title": "K8s：从对象模型拆到生产排障",
     "category": "K8s",
     "date": "2026-05-12",
-    "readTime": "11 min",
-    "excerpt": "快速掌握 Kubernetes 要从声明式对象、控制器循环和服务发现入手，再进入调度、存储、网络、安全和可观测性。",
+    "readTime": "16 min",
+    "excerpt": "快速掌握 Kubernetes 要把对象模型、控制器、调度、网络、存储、安全和事件排障串成一张生产地图。",
     "quote": "顶层看期望状态，底层看控制器如何把现实拉回声明。",
     "topThinking": "先理解 Kubernetes 是声明式控制系统，不是简单的容器启动器。",
     "deepDive": "拆到 Pod、Deployment、Service、Ingress、ConfigMap、Secret、PVC、RBAC、调度、探针、HPA 和事件。",
@@ -374,6 +591,18 @@ window.BLOG_POSTS = [
       "Service、Endpoint、NetworkPolicy",
       "和",
       "DNS。",
+      "能力地图",
+      "对象模型：Pod、ReplicaSet、Deployment、StatefulSet、DaemonSet",
+      "流量入口：Service、EndpointSlice、Ingress、Gateway",
+      "API、CoreDNS",
+      "配置身份：ConfigMap、Secret、ServiceAccount、RBAC",
+      "调度资源：requests、limits、taints、tolerations、affinity、priority",
+      "存储状态：PV、PVC、StorageClass、StatefulSet、有状态服务滚动策略",
+      "弹性稳定：readiness、liveness、startup",
+      "probe、HPA、PDB、滚动发布",
+      "排障证据：events、logs、describe、metrics、container",
+      "status、node",
+      "condition",
       "快速实验清单",
       "写",
       "Deployment、Service、Ingress、ConfigMap、Secret",
@@ -398,6 +627,84 @@ window.BLOG_POSTS = [
       "Helm",
       "安装一个组件，再查看渲染后的",
       "YAML",
+      "排障检查点",
+      "Pod",
+      "Pending：看资源不足、nodeSelector、affinity、taints、PVC",
+      "绑定",
+      "ImagePullBackOff：看镜像名、tag、仓库权限、imagePullSecret",
+      "和网络",
+      "CrashLoopBackOff：看启动命令、配置文件、依赖连接、探针是否过早",
+      "Service",
+      "不通：看",
+      "selector",
+      "是否匹配、Endpoint",
+      "是否生成、端口名和",
+      "targetPort",
+      "Ingress",
+      "不通：看",
+      "IngressClass、Controller",
+      "日志、TLS",
+      "secret",
+      "和后端",
+      "Service",
+      "扩容无效：看",
+      "HPA",
+      "指标源、requests",
+      "是否设置、PDB",
+      "是否限制驱逐",
+      "最小上线配置",
+      "apiVersion:",
+      "apps/v1",
+      "kind:",
+      "Deployment",
+      "metadata:",
+      "name:",
+      "api",
+      "spec:",
+      "replicas:",
+      "3",
+      "selector:",
+      "matchLabels:",
+      "app:",
+      "api",
+      "template:",
+      "metadata:",
+      "labels:",
+      "app:",
+      "api",
+      "spec:",
+      "containers:",
+      "-",
+      "name:",
+      "api",
+      "image:",
+      "example/api@sha256:...",
+      "ports:",
+      "-",
+      "containerPort:",
+      "8080",
+      "resources:",
+      "requests:",
+      "cpu:",
+      "300m",
+      "memory:",
+      "512Mi",
+      "limits:",
+      "memory:",
+      "1Gi",
+      "readinessProbe:",
+      "httpGet:",
+      "path:",
+      "/ready",
+      "port:",
+      "8080",
+      "livenessProbe:",
+      "httpGet:",
+      "path:",
+      "/live",
+      "port:",
+      "8080",
+      "最小上线配置必须回答四个问题：谁来接流量，何时接流量，需要多少资源，失败后如何恢复。",
       "官方文档入口",
       "Kubernetes",
       "Concepts:",
@@ -465,6 +772,24 @@ window.BLOG_POSTS = [
       {
         "type": "heading",
         "level": 2,
+        "text": "能力地图"
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "对象模型：Pod、ReplicaSet、Deployment、StatefulSet、DaemonSet",
+          "流量入口：Service、EndpointSlice、Ingress、Gateway API、CoreDNS",
+          "配置身份：ConfigMap、Secret、ServiceAccount、RBAC",
+          "调度资源：requests、limits、taints、tolerations、affinity、priority",
+          "存储状态：PV、PVC、StorageClass、StatefulSet、有状态服务滚动策略",
+          "弹性稳定：readiness、liveness、startup probe、HPA、PDB、滚动发布",
+          "排障证据：events、logs、describe、metrics、container status、node condition"
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
         "text": "快速实验清单"
       },
       {
@@ -477,6 +802,37 @@ window.BLOG_POSTS = [
           "设置 requests 和 limits，观察调度与 OOMKilled",
           "用 Helm 安装一个组件，再查看渲染后的 YAML"
         ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "排障检查点"
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "Pod Pending：看资源不足、nodeSelector、affinity、taints、PVC 绑定",
+          "ImagePullBackOff：看镜像名、tag、仓库权限、imagePullSecret 和网络",
+          "CrashLoopBackOff：看启动命令、配置文件、依赖连接、探针是否过早",
+          "Service 不通：看 selector 是否匹配、Endpoint 是否生成、端口名和 targetPort",
+          "Ingress 不通：看 IngressClass、Controller 日志、TLS secret 和后端 Service",
+          "扩容无效：看 HPA 指标源、requests 是否设置、PDB 是否限制驱逐"
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "最小上线配置"
+      },
+      {
+        "type": "code",
+        "language": "yaml",
+        "text": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: api\nspec:\n  replicas: 3\n  selector:\n    matchLabels:\n      app: api\n  template:\n    metadata:\n      labels:\n        app: api\n    spec:\n      containers:\n        - name: api\n          image: example/api@sha256:...\n          ports:\n            - containerPort: 8080\n          resources:\n            requests:\n              cpu: 300m\n              memory: 512Mi\n            limits:\n              memory: 1Gi\n          readinessProbe:\n            httpGet:\n              path: /ready\n              port: 8080\n          livenessProbe:\n            httpGet:\n              path: /live\n              port: 8080"
+      },
+      {
+        "type": "paragraph",
+        "text": "最小上线配置必须回答四个问题：谁来接流量，何时接流量，需要多少资源，失败后如何恢复。"
       },
       {
         "type": "heading",
@@ -505,8 +861,8 @@ window.BLOG_POSTS = [
     "title": "中间件：从流量入口拆到消息语义",
     "category": "中间件",
     "date": "2026-05-12",
-    "readTime": "10 min",
-    "excerpt": "快速掌握中间件要把网关、缓存、消息队列、流处理和可观测性放在一条请求链路里理解。",
+    "readTime": "15 min",
+    "excerpt": "快速掌握中间件要把网关、缓存、消息队列、流处理和可观测性放在同一条请求链路里理解。",
     "quote": "顶层看系统解耦，底层看一致性、延迟和失败语义。",
     "topThinking": "先判断中间件承担的是削峰、解耦、缓存、路由、治理还是观测职责。",
     "deepDive": "拆到 Redis 数据结构、Kafka 分区、RabbitMQ exchange、NGINX 代理、限流、重试、幂等和积压处理。",
@@ -525,6 +881,7 @@ window.BLOG_POSTS = [
       "负责日志、事件流和数据管道",
       "可观测性：Prometheus、日志系统、Trace",
       "系统负责证据链",
+      "判断一个中间件是否该引入，先问三个问题：它解决的是延迟、吞吐、隔离、可靠性还是治理？它失败时会不会把故障扩大？团队是否有能力观测和维护它？",
       "底层拆解：消息系统首先要问语义",
       "学习消息队列时，不要只会生产和消费，要能回答这些问题：",
       "消息是否允许重复，消费者是否幂等",
@@ -537,6 +894,14 @@ window.BLOG_POSTS = [
       "还是下游数据库",
       "消息确认发生在处理前还是处理后",
       "保留策略、过期时间和磁盘水位如何设置",
+      "能力地图",
+      "网关代理：连接复用、超时、重试、限流、TLS、灰度路由",
+      "缓存系统：缓存旁路、过期策略、淘汰策略、热点",
+      "key、持久化",
+      "消息队列：确认、重试、死信、顺序、幂等、消费者组",
+      "流处理：分区、offset、保留时间、compact、rebalancing",
+      "稳定性：背压、熔断、降级、隔离舱、连接池和线程池",
+      "可观测：吞吐、延迟、错误率、积压量、连接数、重试次数",
       "快速实验清单",
       "用",
       "Redis",
@@ -557,6 +922,31 @@ window.BLOG_POSTS = [
       "配置",
       "upstream、超时、重试和限流",
       "给每个组件加延迟、错误率、积压量和连接数指标",
+      "排障检查点",
+      "Redis",
+      "延迟高：看慢日志、大",
+      "key、热",
+      "key、内存淘汰、fork",
+      "和网络",
+      "缓存不一致：看写数据库和删缓存的顺序、重试、延迟双删和过期时间",
+      "Kafka",
+      "积压：看生产速率、消费速率、分区数、消费者数量和下游瓶颈",
+      "RabbitMQ",
+      "阻塞：看未确认消息、prefetch、死信队列、磁盘水位",
+      "NGINX",
+      "502/504：看",
+      "upstream",
+      "健康、连接超时、读超时、后端连接池",
+      "重试放大：看超时设置、最大重试次数、退避和抖动",
+      "一条请求里的中间件视角",
+      "网关接入请求，决定是否限流、鉴权、路由和记录",
+      "trace",
+      "id",
+      "服务先读缓存，命中则快速返回，未命中进入数据库",
+      "写路径先提交数据库，再发出事件或删除缓存",
+      "队列消费者异步处理通知、索引、报表或外部调用",
+      "可观测系统串起网关、服务、缓存、队列和数据库的证据链",
+      "中间件学习的核心是失败语义：失败时是丢、等、重试、降级，还是把压力传递给下游。",
       "官方文档入口",
       "Redis",
       "Docs:",
@@ -597,6 +987,10 @@ window.BLOG_POSTS = [
         ]
       },
       {
+        "type": "paragraph",
+        "text": "判断一个中间件是否该引入，先问三个问题：它解决的是延迟、吞吐、隔离、可靠性还是治理？它失败时会不会把故障扩大？团队是否有能力观测和维护它？"
+      },
+      {
         "type": "heading",
         "level": 2,
         "text": "底层拆解：消息系统首先要问语义"
@@ -620,6 +1014,23 @@ window.BLOG_POSTS = [
       {
         "type": "heading",
         "level": 2,
+        "text": "能力地图"
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "网关代理：连接复用、超时、重试、限流、TLS、灰度路由",
+          "缓存系统：缓存旁路、过期策略、淘汰策略、热点 key、持久化",
+          "消息队列：确认、重试、死信、顺序、幂等、消费者组",
+          "流处理：分区、offset、保留时间、compact、rebalancing",
+          "稳定性：背压、熔断、降级、隔离舱、连接池和线程池",
+          "可观测：吞吐、延迟、错误率、积压量、连接数、重试次数"
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
         "text": "快速实验清单"
       },
       {
@@ -632,6 +1043,43 @@ window.BLOG_POSTS = [
           "用 NGINX 配置 upstream、超时、重试和限流",
           "给每个组件加延迟、错误率、积压量和连接数指标"
         ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "排障检查点"
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "Redis 延迟高：看慢日志、大 key、热 key、内存淘汰、fork 和网络",
+          "缓存不一致：看写数据库和删缓存的顺序、重试、延迟双删和过期时间",
+          "Kafka 积压：看生产速率、消费速率、分区数、消费者数量和下游瓶颈",
+          "RabbitMQ 阻塞：看未确认消息、prefetch、死信队列、磁盘水位",
+          "NGINX 502/504：看 upstream 健康、连接超时、读超时、后端连接池",
+          "重试放大：看超时设置、最大重试次数、退避和抖动"
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "一条请求里的中间件视角"
+      },
+      {
+        "type": "list",
+        "ordered": true,
+        "items": [
+          "网关接入请求，决定是否限流、鉴权、路由和记录 trace id",
+          "服务先读缓存，命中则快速返回，未命中进入数据库",
+          "写路径先提交数据库，再发出事件或删除缓存",
+          "队列消费者异步处理通知、索引、报表或外部调用",
+          "可观测系统串起网关、服务、缓存、队列和数据库的证据链"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "中间件学习的核心是失败语义：失败时是丢、等、重试、降级，还是把压力传递给下游。"
       },
       {
         "type": "heading",

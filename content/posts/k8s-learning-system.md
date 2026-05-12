@@ -2,8 +2,8 @@
 title: "K8s：从对象模型拆到生产排障"
 category: "K8s"
 date: "2026-05-12"
-readTime: "11 min"
-excerpt: "快速掌握 Kubernetes 要从声明式对象、控制器循环和服务发现入手，再进入调度、存储、网络、安全和可观测性。"
+readTime: "16 min"
+excerpt: "快速掌握 Kubernetes 要把对象模型、控制器、调度、网络、存储、安全和事件排障串成一张生产地图。"
 quote: "顶层看期望状态，底层看控制器如何把现实拉回声明。"
 topThinking: "先理解 Kubernetes 是声明式控制系统，不是简单的容器启动器。"
 deepDive: "拆到 Pod、Deployment、Service、Ingress、ConfigMap、Secret、PVC、RBAC、调度、探针、HPA 和事件。"
@@ -35,6 +35,16 @@ Kubernetes 的核心不是 `kubectl apply`，而是你声明期望状态，控�
 
 这条链路就是排障地图。Pod 不启动看事件和镜像，不能调度看资源和污点，不能访问看 Service、Endpoint、NetworkPolicy 和 DNS。
 
+## 能力地图
+
+- 对象模型：Pod、ReplicaSet、Deployment、StatefulSet、DaemonSet
+- 流量入口：Service、EndpointSlice、Ingress、Gateway API、CoreDNS
+- 配置身份：ConfigMap、Secret、ServiceAccount、RBAC
+- 调度资源：requests、limits、taints、tolerations、affinity、priority
+- 存储状态：PV、PVC、StorageClass、StatefulSet、有状态服务滚动策略
+- 弹性稳定：readiness、liveness、startup probe、HPA、PDB、滚动发布
+- 排障证据：events、logs、describe、metrics、container status、node condition
+
 ## 快速实验清单
 
 - 写 Deployment、Service、Ingress、ConfigMap、Secret 的最小 YAML
@@ -43,10 +53,58 @@ Kubernetes 的核心不是 `kubectl apply`，而是你声明期望状态，控�
 - 设置 requests 和 limits，观察调度与 OOMKilled
 - 用 Helm 安装一个组件，再查看渲染后的 YAML
 
+## 排障检查点
+
+- Pod Pending：看资源不足、nodeSelector、affinity、taints、PVC 绑定
+- ImagePullBackOff：看镜像名、tag、仓库权限、imagePullSecret 和网络
+- CrashLoopBackOff：看启动命令、配置文件、依赖连接、探针是否过早
+- Service 不通：看 selector 是否匹配、Endpoint 是否生成、端口名和 targetPort
+- Ingress 不通：看 IngressClass、Controller 日志、TLS secret 和后端 Service
+- 扩容无效：看 HPA 指标源、requests 是否设置、PDB 是否限制驱逐
+
+## 最小上线配置
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - name: api
+          image: example/api@sha256:...
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: 300m
+              memory: 512Mi
+            limits:
+              memory: 1Gi
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+          livenessProbe:
+            httpGet:
+              path: /live
+              port: 8080
+```
+
+最小上线配置必须回答四个问题：谁来接流量，何时接流量，需要多少资源，失败后如何恢复。
+
 ## 官方文档入口
 
 - Kubernetes Concepts: https://kubernetes.io/docs/concepts/
 - Kubernetes Tasks: https://kubernetes.io/docs/tasks/
 - Helm Docs: https://helm.sh/docs/
 - etcd Docs: https://etcd.io/docs/
-

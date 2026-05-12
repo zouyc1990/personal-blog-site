@@ -11,6 +11,7 @@ const timeline = document.querySelector("#timeline");
 const newsletterForm = document.querySelector("#newsletter-form");
 const formMessage = document.querySelector("#form-message");
 const featuredButton = document.querySelector("[data-open-featured]");
+const guideFilters = document.querySelectorAll(".guide-filter");
 
 let activeFilter = "全部";
 
@@ -209,6 +210,20 @@ filters.forEach((button) => {
     button.classList.add("active");
     activeFilter = button.dataset.filter;
     renderPosts();
+  });
+});
+
+guideFilters.forEach((button) => {
+  button.addEventListener("click", () => {
+    const targetFilter = button.dataset.guideFilter;
+    const filterButton = Array.from(filters).find((filter) => filter.dataset.filter === targetFilter);
+    if (!filterButton) return;
+    filters.forEach((filter) => filter.classList.remove("active"));
+    filterButton.classList.add("active");
+    activeFilter = targetFilter;
+    searchInput.value = "";
+    renderPosts();
+    postGrid.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 });
 
