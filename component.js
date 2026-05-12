@@ -42,13 +42,19 @@ function renderArticleBlock(block) {
 
 function renderComponentScheme(component) {
   const schemeText = component.bodyBlocks?.find((block) => block.type === "paragraph" && /落地|方案/.test(block.text))?.text || "";
-  const commands = component.bodyBlocks?.find((block) => block.type === "code")?.text || "";
+  const commandsBlock = component.bodyBlocks?.find((block) => block.type === "code");
+  const commands = commandsBlock?.text || "";
+  const architectureBlock = component.bodyBlocks?.find((block) => block.type === "paragraph" && /架构图|Dockerfile|API Server|Prometheus/.test(block.text));
 
   return `
     <section class="component-scheme">
       <div class="component-scheme-card">
         <h3>落地方案</h3>
         <p>${escapeHtml(component.sourceFocus || schemeText || "将组件放进标准平台链路，并在发布、监控、权限和回滚上形成闭环。")}</p>
+      </div>
+      <div class="component-scheme-card">
+        <h3>架构图</h3>
+        <p>${escapeHtml(architectureBlock?.text || "见正文中的架构分层示意。")}</p>
       </div>
       <div class="component-scheme-card">
         <h3>常用命令</h3>
