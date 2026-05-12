@@ -19,6 +19,7 @@
         <span>永成手记</span>
       </a>
       <nav class="nav-links" aria-label="主导航">
+        <a href="#knowledge">学习体系</a>
         <a href="#posts">文章</a>
         <a href="#archive">归档</a>
         <a href="#about">关于</a>
@@ -52,8 +53,8 @@
             从顶层思维看清系统取舍，从底层技术拆到协议、源码、参数和故障链路。
           </p>
           <div class="hero-actions">
-            <a class="primary-action" href="#posts">浏览文章</a>
-            <a class="secondary-action" href="#newsletter">订阅更新</a>
+            <a class="primary-action" href="#knowledge">快速掌握</a>
+            <a class="secondary-action" href="#posts">浏览文章</a>
           </div>
         </div>
       </section>
@@ -97,6 +98,99 @@
         </div>
       </section>
 
+      <section class="knowledge-section" id="knowledge" aria-labelledby="knowledge-title">
+        <div class="section-heading knowledge-heading">
+          <div>
+            <p class="eyebrow">Learning System</p>
+            <h2 id="knowledge-title">云原生核心知识体系</h2>
+          </div>
+          <p>
+            按“先会用、再懂原理、最后能排障”的顺序，把容器、Kubernetes、中间件和数据库串成一条可执行学习路线。
+          </p>
+        </div>
+
+        <div class="learning-map" aria-label="快速掌握路线">
+          <article>
+            <span>Week 01</span>
+            <h3>容器基础</h3>
+            <p>镜像、容器进程、网络、存储、Compose、Registry、安全基线。</p>
+          </article>
+          <article>
+            <span>Week 02</span>
+            <h3>Kubernetes</h3>
+            <p>Pod、Deployment、Service、Ingress、Config、调度、探针、HPA。</p>
+          </article>
+          <article>
+            <span>Week 03</span>
+            <h3>中间件</h3>
+            <p>网关、缓存、消息队列、流处理、注册配置、可观测性组件。</p>
+          </article>
+          <article>
+            <span>Week 04</span>
+            <h3>数据库</h3>
+            <p>SQL、索引、事务、锁、复制、备份恢复、分库分表、容量治理。</p>
+          </article>
+        </div>
+
+        <div class="resource-grid" aria-label="官方学习文档">
+          <article class="resource-card">
+            <div>
+              <span class="resource-kicker">Containers</span>
+              <h3>容器</h3>
+              <p>重点掌握 Dockerfile、镜像分层、容器生命周期、网络模式、卷挂载、镜像仓库和运行时安全。</p>
+            </div>
+            <ul>
+              <li><a href="https://docs.docker.com/" target="_blank" rel="noreferrer">Docker Docs</a></li>
+              <li><a href="https://docs.docker.com/build/concepts/dockerfile/" target="_blank" rel="noreferrer">Dockerfile</a></li>
+              <li><a href="https://docs.docker.com/compose/" target="_blank" rel="noreferrer">Docker Compose</a></li>
+              <li><a href="https://docs.docker.com/engine/security/" target="_blank" rel="noreferrer">Docker Security</a></li>
+            </ul>
+          </article>
+
+          <article class="resource-card">
+            <div>
+              <span class="resource-kicker">Kubernetes</span>
+              <h3>K8s</h3>
+              <p>重点掌握对象模型、控制器、服务发现、网络、存储、调度、RBAC、Helm 和生产排障。</p>
+            </div>
+            <ul>
+              <li><a href="https://kubernetes.io/docs/concepts/" target="_blank" rel="noreferrer">Kubernetes Concepts</a></li>
+              <li><a href="https://kubernetes.io/docs/tasks/" target="_blank" rel="noreferrer">Kubernetes Tasks</a></li>
+              <li><a href="https://helm.sh/docs/" target="_blank" rel="noreferrer">Helm Docs</a></li>
+              <li><a href="https://etcd.io/docs/" target="_blank" rel="noreferrer">etcd Docs</a></li>
+            </ul>
+          </article>
+
+          <article class="resource-card">
+            <div>
+              <span class="resource-kicker">Middleware</span>
+              <h3>中间件</h3>
+              <p>重点掌握缓存、消息、网关、代理、限流熔断、持久化、消费语义和可观测性。</p>
+            </div>
+            <ul>
+              <li><a href="https://redis.io/docs/latest/" target="_blank" rel="noreferrer">Redis Docs</a></li>
+              <li><a href="https://kafka.apache.org/documentation/" target="_blank" rel="noreferrer">Kafka Documentation</a></li>
+              <li><a href="https://www.rabbitmq.com/docs" target="_blank" rel="noreferrer">RabbitMQ Docs</a></li>
+              <li><a href="https://nginx.org/en/docs/" target="_blank" rel="noreferrer">NGINX Docs</a></li>
+            </ul>
+          </article>
+
+          <article class="resource-card">
+            <div>
+              <span class="resource-kicker">Database</span>
+              <h3>数据库</h3>
+              <p>重点掌握查询执行、索引、事务隔离、锁、MVCC、复制、高可用、备份恢复和慢查询治理。</p>
+            </div>
+            <ul>
+              <li><a href="https://www.postgresql.org/docs/current/" target="_blank" rel="noreferrer">PostgreSQL Docs</a></li>
+              <li><a href="https://dev.mysql.com/doc/refman/8.4/en/" target="_blank" rel="noreferrer">MySQL 8.4 Reference</a></li>
+              <li><a href="https://www.mongodb.com/docs/manual/" target="_blank" rel="noreferrer">MongoDB Manual</a></li>
+              <li><a href="https://www.postgresql.org/docs/current/tutorial.html" target="_blank" rel="noreferrer">PostgreSQL Tutorial</a></li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
       <section class="content-section" id="posts" aria-labelledby="posts-title">
         <div class="section-heading">
           <div>
@@ -116,6 +210,10 @@
           <button class="filter-pill" type="button" data-filter="算法">算法</button>
           <button class="filter-pill" type="button" data-filter="编程">编程</button>
           <button class="filter-pill" type="button" data-filter="Cloud最佳实践">Cloud最佳实践</button>
+          <button class="filter-pill" type="button" data-filter="容器">容器</button>
+          <button class="filter-pill" type="button" data-filter="K8s">K8s</button>
+          <button class="filter-pill" type="button" data-filter="中间件">中间件</button>
+          <button class="filter-pill" type="button" data-filter="数据库">数据库</button>
         </div>
 
         <div class="post-grid" id="post-grid" aria-live="polite"></div>
@@ -147,6 +245,10 @@
             <span>算法</span>
             <span>编程</span>
             <span>Cloud最佳实践</span>
+            <span>容器</span>
+            <span>K8s</span>
+            <span>中间件</span>
+            <span>数据库</span>
           </div>
         </aside>
       </section>

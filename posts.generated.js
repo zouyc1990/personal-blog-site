@@ -1,5 +1,661 @@
 window.BLOG_POSTS = [
   {
+    "id": "container-learning-system",
+    "title": "容器：从镜像构建拆到运行时隔离",
+    "category": "容器",
+    "date": "2026-05-12",
+    "readTime": "9 min",
+    "excerpt": "快速掌握容器要先理解镜像、进程、网络、存储和安全边界，再用 Dockerfile、Compose 和 Registry 串起交付链路。",
+    "quote": "顶层看交付标准化，底层看进程、文件系统和网络命名空间。",
+    "topThinking": "先把容器当成应用交付单元，建立构建、发布、回滚和安全扫描的标准链路。",
+    "deepDive": "拆到 Dockerfile、镜像分层、cgroups、namespaces、bridge 网络、volume、registry 和运行时权限。",
+    "body": [
+      "顶层思维：容器解决的是交付一致性",
+      "容器不是轻量虚拟机，核心价值是把应用、依赖、启动命令和运行约束封装成一个可以重复交付的单元。",
+      "先建立这条主线：",
+      "开发环境和生产环境使用同一份镜像",
+      "Dockerfile",
+      "固化构建步骤，避免人工配置漂移",
+      "Registry",
+      "管理版本，发布和回滚都基于不可变镜像标签",
+      "Compose",
+      "用来理解多服务编排，Kubernetes",
+      "用来承接生产调度",
+      "安全扫描、最小权限和非",
+      "root",
+      "运行要进入默认流程",
+      "底层拆解：容器本质是被隔离的进程",
+      "容器启动后，本质上还是宿主机上的进程，只是被",
+      "Linux",
+      "内核能力限制在特定边界内。",
+      "你需要能说清楚这些机制：",
+      "namespaces",
+      "隔离进程、网络、挂载点、主机名和用户视图",
+      "cgroups",
+      "限制",
+      "CPU、内存、IO",
+      "等资源使用",
+      "union",
+      "filesystem",
+      "让镜像分层复用，并把运行时写入放在容器层",
+      "bridge",
+      "网络让容器获得虚拟网卡，再通过",
+      "NAT",
+      "访问外部网络",
+      "volume",
+      "把数据生命周期从容器生命周期里拆出来",
+      "快速实验清单",
+      "写一个多阶段",
+      "Dockerfile，把构建环境和运行环境分开",
+      "用",
+      "`docker",
+      "inspect`",
+      "查看镜像、网络、挂载和环境变量",
+      "用",
+      "`docker",
+      "stats`",
+      "观察",
+      "CPU",
+      "和内存限制",
+      "用",
+      "Compose",
+      "启动",
+      "Web、Redis、PostgreSQL",
+      "三个服务",
+      "推送镜像到",
+      "Registry，再用固定",
+      "tag",
+      "回滚",
+      "官方文档入口",
+      "Docker",
+      "Docs:",
+      "https://docs.docker.com/",
+      "Dockerfile",
+      "Reference:",
+      "https://docs.docker.com/reference/dockerfile/",
+      "Docker",
+      "Compose:",
+      "https://docs.docker.com/compose/",
+      "Docker",
+      "Engine",
+      "Security:",
+      "https://docs.docker.com/engine/security/"
+    ],
+    "bodyBlocks": [
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "顶层思维：容器解决的是交付一致性"
+      },
+      {
+        "type": "paragraph",
+        "text": "容器不是轻量虚拟机，核心价值是把应用、依赖、启动命令和运行约束封装成一个可以重复交付的单元。"
+      },
+      {
+        "type": "paragraph",
+        "text": "先建立这条主线："
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "开发环境和生产环境使用同一份镜像",
+          "Dockerfile 固化构建步骤，避免人工配置漂移",
+          "Registry 管理版本，发布和回滚都基于不可变镜像标签",
+          "Compose 用来理解多服务编排，Kubernetes 用来承接生产调度",
+          "安全扫描、最小权限和非 root 运行要进入默认流程"
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "底层拆解：容器本质是被隔离的进程"
+      },
+      {
+        "type": "paragraph",
+        "text": "容器启动后，本质上还是宿主机上的进程，只是被 Linux 内核能力限制在特定边界内。"
+      },
+      {
+        "type": "paragraph",
+        "text": "你需要能说清楚这些机制："
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "namespaces 隔离进程、网络、挂载点、主机名和用户视图",
+          "cgroups 限制 CPU、内存、IO 等资源使用",
+          "union filesystem 让镜像分层复用，并把运行时写入放在容器层",
+          "bridge 网络让容器获得虚拟网卡，再通过 NAT 访问外部网络",
+          "volume 把数据生命周期从容器生命周期里拆出来"
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "快速实验清单"
+      },
+      {
+        "type": "list",
+        "ordered": true,
+        "items": [
+          "写一个多阶段 Dockerfile，把构建环境和运行环境分开",
+          "用 `docker inspect` 查看镜像、网络、挂载和环境变量",
+          "用 `docker stats` 观察 CPU 和内存限制",
+          "用 Compose 启动 Web、Redis、PostgreSQL 三个服务",
+          "推送镜像到 Registry，再用固定 tag 回滚"
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "官方文档入口"
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "Docker Docs: https://docs.docker.com/",
+          "Dockerfile Reference: https://docs.docker.com/reference/dockerfile/",
+          "Docker Compose: https://docs.docker.com/compose/",
+          "Docker Engine Security: https://docs.docker.com/engine/security/"
+        ]
+      }
+    ],
+    "colors": [
+      "#0f7b78",
+      "#d7ece7",
+      "#de6449"
+    ]
+  },
+  {
+    "id": "database-learning-system",
+    "title": "数据库：从数据模型拆到慢查询治理",
+    "category": "数据库",
+    "date": "2026-05-12",
+    "readTime": "11 min",
+    "excerpt": "快速掌握数据库要从建模、索引、事务和执行计划入手，再进入复制、备份恢复、容量和高可用。",
+    "quote": "顶层看数据生命周期，底层看执行计划、锁和日志。",
+    "topThinking": "先判断数据的读写模式、一致性要求、增长速度和恢复目标。",
+    "deepDive": "拆到索引结构、MVCC、事务隔离、锁等待、WAL/binlog、复制延迟、备份恢复和慢查询计划。",
+    "body": [
+      "顶层思维：数据库首先是数据生命周期设计",
+      "数据库学习不要从背参数开始，要先回答数据如何进入、如何变化、如何被查询、如何归档和如何恢复。",
+      "建模时先问：",
+      "这张表的主查询路径是什么",
+      "数据增长速度和保留周期是什么",
+      "写入是否需要强一致，读取是否可以接受延迟",
+      "业务能接受的",
+      "RPO",
+      "和",
+      "RTO",
+      "是多少",
+      "删除、归档、审计和脱敏策略在哪里执行",
+      "底层拆解：慢查询往往不是",
+      "SQL",
+      "一件事",
+      "一个慢查询可能来自多个层次：",
+      "没有命中合适索引，导致全表扫描",
+      "选择性太差，优化器即使命中索引也要回表大量数据",
+      "事务太长，持有锁或制造大量版本垃圾",
+      "排序、聚合、join",
+      "中间结果过大",
+      "连接池耗尽，看起来像数据库慢",
+      "复制延迟导致读写分离读到旧数据",
+      "快速实验清单",
+      "对同一条",
+      "SQL",
+      "分别加单列索引、联合索引，比较执行计划",
+      "在两个事务里制造锁等待，观察阻塞链路",
+      "开启慢查询日志，按耗时、扫描行数和调用频次排序",
+      "做一次全量备份和恢复演练，记录真实恢复时间",
+      "模拟主从复制延迟，验证业务是否依赖读后写一致性",
+      "官方文档入口",
+      "PostgreSQL",
+      "Docs:",
+      "https://www.postgresql.org/docs/current/",
+      "PostgreSQL",
+      "Tutorial:",
+      "https://www.postgresql.org/docs/current/tutorial.html",
+      "MySQL",
+      "8.4",
+      "Reference",
+      "Manual:",
+      "https://dev.mysql.com/doc/refman/8.4/en/",
+      "MongoDB",
+      "Manual:",
+      "https://www.mongodb.com/docs/manual/"
+    ],
+    "bodyBlocks": [
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "顶层思维：数据库首先是数据生命周期设计"
+      },
+      {
+        "type": "paragraph",
+        "text": "数据库学习不要从背参数开始，要先回答数据如何进入、如何变化、如何被查询、如何归档和如何恢复。"
+      },
+      {
+        "type": "paragraph",
+        "text": "建模时先问："
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "这张表的主查询路径是什么",
+          "数据增长速度和保留周期是什么",
+          "写入是否需要强一致，读取是否可以接受延迟",
+          "业务能接受的 RPO 和 RTO 是多少",
+          "删除、归档、审计和脱敏策略在哪里执行"
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "底层拆解：慢查询往往不是 SQL 一件事"
+      },
+      {
+        "type": "paragraph",
+        "text": "一个慢查询可能来自多个层次："
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "没有命中合适索引，导致全表扫描",
+          "选择性太差，优化器即使命中索引也要回表大量数据",
+          "事务太长，持有锁或制造大量版本垃圾",
+          "排序、聚合、join 中间结果过大",
+          "连接池耗尽，看起来像数据库慢",
+          "复制延迟导致读写分离读到旧数据"
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "快速实验清单"
+      },
+      {
+        "type": "list",
+        "ordered": true,
+        "items": [
+          "对同一条 SQL 分别加单列索引、联合索引，比较执行计划",
+          "在两个事务里制造锁等待，观察阻塞链路",
+          "开启慢查询日志，按耗时、扫描行数和调用频次排序",
+          "做一次全量备份和恢复演练，记录真实恢复时间",
+          "模拟主从复制延迟，验证业务是否依赖读后写一致性"
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "官方文档入口"
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "PostgreSQL Docs: https://www.postgresql.org/docs/current/",
+          "PostgreSQL Tutorial: https://www.postgresql.org/docs/current/tutorial.html",
+          "MySQL 8.4 Reference Manual: https://dev.mysql.com/doc/refman/8.4/en/",
+          "MongoDB Manual: https://www.mongodb.com/docs/manual/"
+        ]
+      }
+    ],
+    "colors": [
+      "#5b7f45",
+      "#fffaf0",
+      "#d8a321"
+    ]
+  },
+  {
+    "id": "k8s-learning-system",
+    "title": "K8s：从对象模型拆到生产排障",
+    "category": "K8s",
+    "date": "2026-05-12",
+    "readTime": "11 min",
+    "excerpt": "快速掌握 Kubernetes 要从声明式对象、控制器循环和服务发现入手，再进入调度、存储、网络、安全和可观测性。",
+    "quote": "顶层看期望状态，底层看控制器如何把现实拉回声明。",
+    "topThinking": "先理解 Kubernetes 是声明式控制系统，不是简单的容器启动器。",
+    "deepDive": "拆到 Pod、Deployment、Service、Ingress、ConfigMap、Secret、PVC、RBAC、调度、探针、HPA 和事件。",
+    "body": [
+      "顶层思维：K8s",
+      "是期望状态系统",
+      "Kubernetes",
+      "的核心不是",
+      "`kubectl",
+      "apply`，而是你声明期望状态，控制器持续观察现实状态并尝试修正偏差。",
+      "先抓住四条主线：",
+      "Workload：Pod、Deployment、StatefulSet、DaemonSet",
+      "管应用生命周期",
+      "Traffic：Service、Ingress、Gateway",
+      "API",
+      "管服务发现和入口流量",
+      "Config：ConfigMap、Secret、ServiceAccount",
+      "管配置、密钥和身份",
+      "Platform：Node、Scheduler、CNI、CSI、HPA、RBAC",
+      "管资源、安全和扩缩容",
+      "底层拆解：一次发布如何落到集群",
+      "一次",
+      "Deployment",
+      "更新，大致会经过这条链路：",
+      "API",
+      "Server",
+      "接收声明并写入",
+      "etcd",
+      "Deployment",
+      "Controller",
+      "创建新的",
+      "ReplicaSet",
+      "ReplicaSet",
+      "Controller",
+      "创建",
+      "Pod",
+      "Scheduler",
+      "为",
+      "Pod",
+      "选择",
+      "Node",
+      "Kubelet",
+      "拉镜像、挂载卷、启动容器",
+      "Readiness",
+      "Probe",
+      "通过后，Endpoint",
+      "才接入流量",
+      "Service",
+      "或",
+      "Ingress",
+      "把请求转发到可用",
+      "Pod",
+      "这条链路就是排障地图。Pod",
+      "不启动看事件和镜像，不能调度看资源和污点，不能访问看",
+      "Service、Endpoint、NetworkPolicy",
+      "和",
+      "DNS。",
+      "快速实验清单",
+      "写",
+      "Deployment、Service、Ingress、ConfigMap、Secret",
+      "的最小",
+      "YAML",
+      "故意写错镜像",
+      "tag，观察",
+      "`kubectl",
+      "describe",
+      "pod`",
+      "的事件",
+      "设置",
+      "readinessProbe，再验证未就绪",
+      "Pod",
+      "不接流量",
+      "设置",
+      "requests",
+      "和",
+      "limits，观察调度与",
+      "OOMKilled",
+      "用",
+      "Helm",
+      "安装一个组件，再查看渲染后的",
+      "YAML",
+      "官方文档入口",
+      "Kubernetes",
+      "Concepts:",
+      "https://kubernetes.io/docs/concepts/",
+      "Kubernetes",
+      "Tasks:",
+      "https://kubernetes.io/docs/tasks/",
+      "Helm",
+      "Docs:",
+      "https://helm.sh/docs/",
+      "etcd",
+      "Docs:",
+      "https://etcd.io/docs/"
+    ],
+    "bodyBlocks": [
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "顶层思维：K8s 是期望状态系统"
+      },
+      {
+        "type": "paragraph",
+        "text": "Kubernetes 的核心不是 `kubectl apply`，而是你声明期望状态，控制器持续观察现实状态并尝试修正偏差。"
+      },
+      {
+        "type": "paragraph",
+        "text": "先抓住四条主线："
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "Workload：Pod、Deployment、StatefulSet、DaemonSet 管应用生命周期",
+          "Traffic：Service、Ingress、Gateway API 管服务发现和入口流量",
+          "Config：ConfigMap、Secret、ServiceAccount 管配置、密钥和身份",
+          "Platform：Node、Scheduler、CNI、CSI、HPA、RBAC 管资源、安全和扩缩容"
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "底层拆解：一次发布如何落到集群"
+      },
+      {
+        "type": "paragraph",
+        "text": "一次 Deployment 更新，大致会经过这条链路："
+      },
+      {
+        "type": "list",
+        "ordered": true,
+        "items": [
+          "API Server 接收声明并写入 etcd",
+          "Deployment Controller 创建新的 ReplicaSet",
+          "ReplicaSet Controller 创建 Pod",
+          "Scheduler 为 Pod 选择 Node",
+          "Kubelet 拉镜像、挂载卷、启动容器",
+          "Readiness Probe 通过后，Endpoint 才接入流量",
+          "Service 或 Ingress 把请求转发到可用 Pod"
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "这条链路就是排障地图。Pod 不启动看事件和镜像，不能调度看资源和污点，不能访问看 Service、Endpoint、NetworkPolicy 和 DNS。"
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "快速实验清单"
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "写 Deployment、Service、Ingress、ConfigMap、Secret 的最小 YAML",
+          "故意写错镜像 tag，观察 `kubectl describe pod` 的事件",
+          "设置 readinessProbe，再验证未就绪 Pod 不接流量",
+          "设置 requests 和 limits，观察调度与 OOMKilled",
+          "用 Helm 安装一个组件，再查看渲染后的 YAML"
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "官方文档入口"
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "Kubernetes Concepts: https://kubernetes.io/docs/concepts/",
+          "Kubernetes Tasks: https://kubernetes.io/docs/tasks/",
+          "Helm Docs: https://helm.sh/docs/",
+          "etcd Docs: https://etcd.io/docs/"
+        ]
+      }
+    ],
+    "colors": [
+      "#326ce5",
+      "#e8eee0",
+      "#0f7b78"
+    ]
+  },
+  {
+    "id": "middleware-learning-system",
+    "title": "中间件：从流量入口拆到消息语义",
+    "category": "中间件",
+    "date": "2026-05-12",
+    "readTime": "10 min",
+    "excerpt": "快速掌握中间件要把网关、缓存、消息队列、流处理和可观测性放在一条请求链路里理解。",
+    "quote": "顶层看系统解耦，底层看一致性、延迟和失败语义。",
+    "topThinking": "先判断中间件承担的是削峰、解耦、缓存、路由、治理还是观测职责。",
+    "deepDive": "拆到 Redis 数据结构、Kafka 分区、RabbitMQ exchange、NGINX 代理、限流、重试、幂等和积压处理。",
+    "body": [
+      "顶层思维：中间件是系统边界上的能力层",
+      "中间件不要按产品名死记，要按系统职责理解。",
+      "常见职责可以拆成五类：",
+      "流量入口：NGINX、Ingress、API",
+      "Gateway",
+      "负责路由、TLS、限流和灰度",
+      "缓存加速：Redis",
+      "负责热点数据、分布式锁、计数器和会话",
+      "异步解耦：RabbitMQ、Kafka",
+      "负责削峰、缓冲和事件分发",
+      "流式处理：Kafka",
+      "负责日志、事件流和数据管道",
+      "可观测性：Prometheus、日志系统、Trace",
+      "系统负责证据链",
+      "底层拆解：消息系统首先要问语义",
+      "学习消息队列时，不要只会生产和消费，要能回答这些问题：",
+      "消息是否允许重复，消费者是否幂等",
+      "失败后是重试、进入死信队列，还是阻塞整个分区",
+      "顺序要求是全局顺序，还是同一个",
+      "key",
+      "内有序",
+      "积压后如何扩容消费者，瓶颈在",
+      "broker",
+      "还是下游数据库",
+      "消息确认发生在处理前还是处理后",
+      "保留策略、过期时间和磁盘水位如何设置",
+      "快速实验清单",
+      "用",
+      "Redis",
+      "实现缓存旁路模式，并处理缓存穿透、击穿、雪崩",
+      "用",
+      "RabbitMQ",
+      "写",
+      "direct、topic、fanout",
+      "三种",
+      "exchange",
+      "用",
+      "Kafka",
+      "建",
+      "topic、分区、消费者组，观察",
+      "rebalancing",
+      "用",
+      "NGINX",
+      "配置",
+      "upstream、超时、重试和限流",
+      "给每个组件加延迟、错误率、积压量和连接数指标",
+      "官方文档入口",
+      "Redis",
+      "Docs:",
+      "https://redis.io/docs/latest/",
+      "Kafka",
+      "Documentation:",
+      "https://kafka.apache.org/documentation/",
+      "RabbitMQ",
+      "Docs:",
+      "https://www.rabbitmq.com/docs",
+      "NGINX",
+      "Docs:",
+      "https://nginx.org/en/docs/"
+    ],
+    "bodyBlocks": [
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "顶层思维：中间件是系统边界上的能力层"
+      },
+      {
+        "type": "paragraph",
+        "text": "中间件不要按产品名死记，要按系统职责理解。"
+      },
+      {
+        "type": "paragraph",
+        "text": "常见职责可以拆成五类："
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "流量入口：NGINX、Ingress、API Gateway 负责路由、TLS、限流和灰度",
+          "缓存加速：Redis 负责热点数据、分布式锁、计数器和会话",
+          "异步解耦：RabbitMQ、Kafka 负责削峰、缓冲和事件分发",
+          "流式处理：Kafka 负责日志、事件流和数据管道",
+          "可观测性：Prometheus、日志系统、Trace 系统负责证据链"
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "底层拆解：消息系统首先要问语义"
+      },
+      {
+        "type": "paragraph",
+        "text": "学习消息队列时，不要只会生产和消费，要能回答这些问题："
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "消息是否允许重复，消费者是否幂等",
+          "失败后是重试、进入死信队列，还是阻塞整个分区",
+          "顺序要求是全局顺序，还是同一个 key 内有序",
+          "积压后如何扩容消费者，瓶颈在 broker 还是下游数据库",
+          "消息确认发生在处理前还是处理后",
+          "保留策略、过期时间和磁盘水位如何设置"
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "快速实验清单"
+      },
+      {
+        "type": "list",
+        "ordered": true,
+        "items": [
+          "用 Redis 实现缓存旁路模式，并处理缓存穿透、击穿、雪崩",
+          "用 RabbitMQ 写 direct、topic、fanout 三种 exchange",
+          "用 Kafka 建 topic、分区、消费者组，观察 rebalancing",
+          "用 NGINX 配置 upstream、超时、重试和限流",
+          "给每个组件加延迟、错误率、积压量和连接数指标"
+        ]
+      },
+      {
+        "type": "heading",
+        "level": 2,
+        "text": "官方文档入口"
+      },
+      {
+        "type": "list",
+        "ordered": false,
+        "items": [
+          "Redis Docs: https://redis.io/docs/latest/",
+          "Kafka Documentation: https://kafka.apache.org/documentation/",
+          "RabbitMQ Docs: https://www.rabbitmq.com/docs",
+          "NGINX Docs: https://nginx.org/en/docs/"
+        ]
+      }
+    ],
+    "colors": [
+      "#de6449",
+      "#f1dfb8",
+      "#7f4d64"
+    ]
+  },
+  {
     "id": "sre-change-philosophy",
     "title": "SRE 理念：从业务目标拆到故障链路",
     "category": "SRE理念",
