@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="永成手记组件深度知识库：本质、架构、命令、源码、算法、落地方案和面试题。"
+    />
+    <title>组件知识库 | 永成手记</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body class="component-page">
+    <header class="site-header">
+      <a class="brand" href="./index.html#top" aria-label="永成手记首页">
+        <span class="brand-mark">Y</span>
+        <span>永成手记</span>
+      </a>
+      <nav class="nav-links" aria-label="主导航">
+        <a href="./index.html#components">组件</a>
+        <a href="./index.html#knowledge">学习体系</a>
+        <a href="./index.html#posts">文章</a>
+      </nav>
+    </header>
+
+    <main class="component-layout">
+      <aside class="component-sidebar">
+        <p class="eyebrow">Component Library</p>
+        <nav id="component-nav" aria-label="组件导航"></nav>
+      </aside>
+
+      <article class="component-article" id="component-article" aria-live="polite"></article>
+    </main>
+
+    <script src="./components.generated.js"></script>
+    <script src="./component.js"></script>
+  </body>
+</html>

@@ -1,6 +1,8 @@
 const posts = window.BLOG_POSTS || [];
+const components = window.BLOG_COMPONENTS || [];
 
 const postGrid = document.querySelector("#post-grid");
+const componentGrid = document.querySelector("#component-grid");
 const searchInput = document.querySelector("#search-input");
 const emptyState = document.querySelector("#empty-state");
 const filters = document.querySelectorAll(".filter-pill");
@@ -109,6 +111,32 @@ function renderPosts() {
     .join("");
 
   emptyState.hidden = visiblePosts.length > 0;
+}
+
+function renderComponents() {
+  if (!componentGrid) return;
+
+  componentGrid.innerHTML = components
+    .map((component) => {
+      const [artA, artB, artC] = component.colors;
+      return `
+        <article class="component-card">
+          <div class="component-art" style="--art-a: ${artA}; --art-b: ${artB}; --art-c: ${artC};"></div>
+          <div class="component-card-body">
+            <span>${escapeHtml(component.domain)}</span>
+            <h3>${escapeHtml(component.title)}</h3>
+            <p>${escapeHtml(component.summary)}</p>
+            <ul>
+              <li>本质：${escapeHtml(component.essence)}</li>
+              <li>场景：${escapeHtml(component.scenarios)}</li>
+              <li>源码：${escapeHtml(component.sourceFocus || "核心路径与关键流程")}</li>
+            </ul>
+            <a class="component-link" href="./component.html?id=${encodeURIComponent(component.id)}">进入组件页</a>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
 }
 
 function renderTimeline() {
@@ -257,5 +285,6 @@ newsletterForm.addEventListener("submit", (event) => {
 window.addEventListener("resize", drawAmbientCanvas);
 
 renderPosts();
+renderComponents();
 renderTimeline();
 drawAmbientCanvas();

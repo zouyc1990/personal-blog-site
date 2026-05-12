@@ -3,7 +3,9 @@ const path = require("path");
 
 const rootDir = path.resolve(__dirname, "..");
 const postsDir = path.join(rootDir, "content", "posts");
+const componentsDir = path.join(rootDir, "content", "components");
 const outputFile = path.join(rootDir, "posts.generated.js");
+const componentOutputFile = path.join(rootDir, "components.generated.js");
 
 function slugify(fileName) {
   return path.basename(fileName, path.extname(fileName));
@@ -164,8 +166,50 @@ function loadPosts() {
     .sort((a, b) => new Date(b.date) - new Date(a.date));
 }
 
+function loadComponents() {
+  if (!fs.existsSync(componentsDir)) {
+    return [];
+  }
+
+  const files = fs
+    .readdirSync(componentsDir)
+    .filter((fileName) => fileName.endsWith(".md"))
+    .sort();
+
+  return files.map((fileName) => {
+    const source = fs.readFileSync(path.join(componentsDir, fileName), "utf8");
+    const { meta, markdown } = parseFrontmatter(source, fileName);
+    const bodyBlocks = markdownToBlocks(markdown);
+    const requiredFields = ["title", "domain", "summary", "essence", "scenarios"];
+
+    requiredFields.forEach((field) => {
+      if (!meta[field]) {
+        throw new Error(`${fileName} 缺少 ${field}`);
+      }
+    });
+
+    return {
+      id: meta.id || slugify(fileName),
+      title: meta.title,
+      domain: meta.domain,
+      summary: meta.summary,
+      essence: meta.essence,
+      scenarios: meta.scenarios,
+      sourceFocus: meta.sourceFocus || "",
+      colors: (meta.colors || "#0f7b78,#f2b66d,#7f4d64").split(",").map((color) => color.trim()),
+      body: blocksToText(bodyBlocks).split(/\s+/).filter(Boolean),
+      bodyBlocks,
+      rawMarkdown: markdown
+    };
+  });
+}
+
 const posts = loadPosts();
 const output = `window.BLOG_POSTS = ${JSON.stringify(posts, null, 2)};\n`;
+const components = loadComponents();
+const componentOutput = `window.BLOG_COMPONENTS = ${JSON.stringify(components, null, 2)};\n`;
 
 fs.writeFileSync(outputFile, output);
+fs.writeFileSync(componentOutputFile, componentOutput);
 console.log(`Built ${posts.length} posts -> ${path.relative(rootDir, outputFile)}`);
+console.log(`Built ${components.length} components -> ${path.relative(rootDir, componentOutputFile)}`);
