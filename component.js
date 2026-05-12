@@ -40,21 +40,51 @@ function renderArticleBlock(block) {
   return `<p>${escapeHtml(block.text)}</p>`;
 }
 
+function getSectionBlocks(component, titlePattern) {
+  const blocks = component.bodyBlocks || [];
+  const startIndex = blocks.findIndex((block) => block.type === "heading" && titlePattern.test(block.text));
+
+  if (startIndex === -1) {
+    return [];
+  }
+
+  const sectionBlocks = [];
+  for (let index = startIndex + 1; index < blocks.length; index += 1) {
+    const block = blocks[index];
+    if (block.type === "heading" && block.level <= blocks[startIndex].level) {
+      break;
+    }
+    sectionBlocks.push(block);
+  }
+
+  return sectionBlocks;
+}
+
+function getFirstText(blocks) {
+  return blocks.find((block) => block.type === "paragraph" || block.type === "quote")?.text || "";
+}
+
+function getFirstCode(blocks) {
+  return blocks.find((block) => block.type === "code")?.text || "";
+}
+
 function renderComponentScheme(component) {
-  const schemeText = component.bodyBlocks?.find((block) => block.type === "paragraph" && /落地|方案/.test(block.text))?.text || "";
-  const commandsBlock = component.bodyBlocks?.find((block) => block.type === "code");
-  const commands = commandsBlock?.text || "";
-  const architectureBlock = component.bodyBlocks?.find((block) => block.type === "paragraph" && /架构图|Dockerfile|API Server|Prometheus/.test(block.text));
+  const schemeBlocks = getSectionBlocks(component, /典型落地方案|落地方案/);
+  const architectureBlocks = getSectionBlocks(component, /架构图|底层架构/);
+  const commandBlocks = getSectionBlocks(component, /常用命令/);
+  const schemeText = getFirstText(schemeBlocks);
+  const architecture = getFirstCode(architectureBlocks) || getFirstText(architectureBlocks);
+  const commands = getFirstCode(commandBlocks);
 
   return `
     <section class="component-scheme">
       <div class="component-scheme-card">
         <h3>落地方案</h3>
-        <p>${escapeHtml(component.sourceFocus || schemeText || "将组件放进标准平台链路，并在发布、监控、权限和回滚上形成闭环。")}</p>
+        <p>${escapeHtml(schemeText || "将组件放进标准平台链路，并在发布、监控、权限和回滚上形成闭环。")}</p>
       </div>
       <div class="component-scheme-card">
         <h3>架构图</h3>
-        <p>${escapeHtml(architectureBlock?.text || "见正文中的架构分层示意。")}</p>
+        <pre><code>${escapeHtml(architecture || "见正文中的架构分层示意。")}</code></pre>
       </div>
       <div class="component-scheme-card">
         <h3>常用命令</h3>
