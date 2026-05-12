@@ -504,7 +504,7 @@ h1 {
 
 .track-columns {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
 }
 
@@ -516,6 +516,10 @@ h1 {
 
 .track-columns section:nth-child(2) {
   background: rgba(222, 100, 73, 0.08);
+}
+
+.track-columns section:nth-child(3) {
+  background: rgba(216, 163, 33, 0.1);
 }
 
 .track-columns h4 {
@@ -1137,9 +1141,12 @@ h4.article-heading {
   .post-grid,
   .intro-grid,
   .posts-guide,
-  .knowledge-shell,
-  .track-columns {
+  .knowledge-shell {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .track-columns {
+    grid-template-columns: 1fr;
   }
 
   .split-section,

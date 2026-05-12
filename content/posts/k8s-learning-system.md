@@ -2,8 +2,8 @@
 title: "K8s：从对象模型拆到生产排障"
 category: "K8s"
 date: "2026-05-12"
-readTime: "16 min"
-excerpt: "快速掌握 Kubernetes 要把对象模型、控制器、调度、网络、存储、安全和事件排障串成一张生产地图。"
+readTime: "22 min"
+excerpt: "快速掌握 Kubernetes 要理解它的本质、控制面架构、适用场景，以及调度、共识、弹性伸缩背后的算法和数学原理。"
 quote: "顶层看期望状态，底层看控制器如何把现实拉回声明。"
 topThinking: "先理解 Kubernetes 是声明式控制系统，不是简单的容器启动器。"
 deepDive: "拆到 Pod、Deployment、Service、Ingress、ConfigMap、Secret、PVC、RBAC、调度、探针、HPA 和事件。"
@@ -20,6 +20,60 @@ Kubernetes 的核心不是 `kubectl apply`，而是你声明期望状态，控�
 - Traffic：Service、Ingress、Gateway API 管服务发现和入口流量
 - Config：ConfigMap、Secret、ServiceAccount 管配置、密钥和身份
 - Platform：Node、Scheduler、CNI、CSI、HPA、RBAC 管资源、安全和扩缩容
+
+## 本质：K8s 是分布式系统的期望状态控制器
+
+Kubernetes 的本质不是“管理容器”，而是一个声明式分布式控制系统。
+
+你提交的是期望状态：需要几个副本、开放什么端口、需要多少资源、如何探活、如何挂载存储。控制面不断观察现实状态，并通过控制器把现实拉向期望。
+
+这个思想来自控制论：系统有目标值，有观测值，有误差，有调节动作。Kubernetes 里的 controller loop 就是在不断执行：
+
+1. 观察当前状态
+2. 比较期望状态
+3. 计算差异
+4. 发起修正动作
+5. 继续观察
+
+## 底层架构：控制面、节点面和扩展接口
+
+Kubernetes 可以拆成三层：
+
+- 控制面：API Server、etcd、Scheduler、Controller Manager、Admission
+- 节点面：Kubelet、container runtime、kube-proxy、CNI、CSI
+- 扩展面：CRD、Operator、Webhook、Helm、Gateway/Ingress Controller
+
+一次创建 Pod 的完整路径：
+
+1. API Server 校验请求，经过认证、鉴权、准入控制
+2. 对象写入 etcd，成为集群事实来源
+3. Scheduler 监听到未绑定节点的 Pod，执行过滤和打分
+4. Kubelet 监听到分配给自己的 Pod，调用 runtime 启动容器
+5. CNI 配网络，CSI 挂存储，探针决定是否接入流量
+6. Controller 持续检查副本数、滚动发布和故障恢复
+
+## 典型场景：什么时候该用 K8s
+
+适合 Kubernetes 的场景：
+
+- 微服务数量多，需要统一发布、伸缩、回滚和服务发现
+- 多团队共享基础设施，需要资源配额、命名空间和权限治理
+- 需要自动恢复、弹性伸缩、灰度发布和可观测标准化
+- 希望把平台能力沉淀成 Operator、CRD 或内部 PaaS
+
+不适合直接上 Kubernetes 的场景：
+
+- 服务数量很少，发布频率低，团队没有平台运维能力
+- 业务复杂度低，但引入 K8s 后运维复杂度明显高于收益
+- 关键依赖没有监控、日志、备份和容量治理，先上 K8s 只会放大混乱
+
+## 算法与数学原理
+
+- Raft 共识：etcd 用 Raft 保证多节点日志一致。核心是 leader、term、quorum，多数派确认后日志才算提交。
+- 调度过滤与打分：Scheduler 先过滤不可用节点，再给可用节点打分。它不是寻找全局最优，而是在约束下快速找到足够好的节点。
+- Bin packing：资源调度类似装箱问题，要把不同 CPU/内存需求的 Pod 放到有限节点上。这个问题通常没有低成本全局最优解，所以系统使用启发式策略。
+- 指数退避：失败重试不是固定频率，而是逐步拉长等待时间，避免故障时把压力继续打到依赖上。
+- HPA 控制公式：副本数近似按 `当前副本数 * 当前指标 / 目标指标` 调整。它背后是反馈控制，但会受到指标延迟和冷启动影响。
 
 ## 底层拆解：一次发布如何落到集群
 

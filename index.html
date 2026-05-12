@@ -105,7 +105,7 @@
             <h2 id="knowledge-title">云原生能力地图</h2>
           </div>
           <p>
-            目标不是收藏链接，而是四周内能读懂生产环境：应用如何交付、服务如何调度、依赖如何削峰、数据如何保证一致与恢复。
+            目标不是收藏链接，而是四周内能读懂生产环境：本质是什么、底层架构如何分层、适合什么场景、关键组件背后用了哪些算法和数学原理。
           </p>
         </div>
 
@@ -124,9 +124,9 @@
             <p class="resource-kicker">Done Means</p>
             <h3>学完要能做三件事</h3>
             <ul>
-              <li>画出一次请求从 Ingress 到数据库的完整链路。</li>
-              <li>根据指标和事件判断故障卡在网络、调度、依赖还是数据层。</li>
-              <li>给新服务写出可上线的镜像、K8s 配置、依赖和备份清单。</li>
+              <li>能用一句话讲清容器、K8s、中间件、数据库的本质。</li>
+              <li>能画出从 Ingress 到数据库的架构链路和故障边界。</li>
+              <li>能说出调度、缓存、队列、索引、复制背后的核心算法。</li>
             </ul>
           </aside>
         </div>
@@ -145,6 +145,14 @@
                   <li>Dockerfile、多阶段构建、镜像分层</li>
                   <li>进程、namespace、cgroup、非 root 运行</li>
                   <li>bridge 网络、端口映射、volume、registry</li>
+                </ul>
+              </section>
+              <section>
+                <h4>原理层</h4>
+                <ul>
+                  <li>本质：进程隔离 + 文件系统快照 + 资源约束</li>
+                  <li>架构：镜像、registry、runtime、kernel、network</li>
+                  <li>算法：Merkle/DAG、hash、copy-on-write、CFS</li>
                 </ul>
               </section>
               <section>
@@ -180,6 +188,14 @@
                 </ul>
               </section>
               <section>
+                <h4>原理层</h4>
+                <ul>
+                  <li>本质：声明式 API + 控制器反馈回路</li>
+                  <li>架构：API Server、etcd、Scheduler、Controller、Kubelet</li>
+                  <li>算法：Raft、调度打分、bin packing、指数退避</li>
+                </ul>
+              </section>
+              <section>
                 <h4>排障入口</h4>
                 <ul>
                   <li>Pending：资源、污点、亲和性、PVC</li>
@@ -212,6 +228,14 @@
                 </ul>
               </section>
               <section>
+                <h4>原理层</h4>
+                <ul>
+                  <li>本质：时间、流量、状态和依赖的缓冲层</li>
+                  <li>架构：client、broker/proxy、存储、复制、消费组</li>
+                  <li>算法：一致性哈希、LRU/LFU、日志追加、令牌桶</li>
+                </ul>
+              </section>
+              <section>
                 <h4>生产问题</h4>
                 <ul>
                   <li>缓存穿透、击穿、雪崩和热点 key</li>
@@ -241,6 +265,14 @@
                   <li>SQL、索引、执行计划、统计信息</li>
                   <li>事务隔离、MVCC、锁等待、死锁</li>
                   <li>WAL/binlog、复制延迟、备份恢复、RPO/RTO</li>
+                </ul>
+              </section>
+              <section>
+                <h4>原理层</h4>
+                <ul>
+                  <li>本质：持久化状态 + 查询优化 + 并发控制</li>
+                  <li>架构：SQL 层、优化器、执行器、缓存、存储引擎、日志</li>
+                  <li>算法：B+Tree、LSM、MVCC、WAL、两阶段提交</li>
                 </ul>
               </section>
               <section>
