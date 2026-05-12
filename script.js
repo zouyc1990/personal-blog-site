@@ -10,6 +10,7 @@ const dialog = document.querySelector("#post-dialog");
 const dialogContent = document.querySelector("#dialog-content");
 const dialogClose = document.querySelector(".dialog-close");
 const timeline = document.querySelector("#timeline");
+const latestRail = document.querySelector("#latest-rail");
 const newsletterForm = document.querySelector("#newsletter-form");
 const formMessage = document.querySelector("#form-message");
 const featuredButton = document.querySelector("[data-open-featured]");
@@ -157,6 +158,24 @@ function renderTimeline() {
     .join("");
 }
 
+function renderLatestRail() {
+  if (!latestRail) return;
+
+  const latestItems = posts.slice(0, 6);
+  const items = [...latestItems, ...latestItems];
+  latestRail.innerHTML = items
+    .map(
+      (post) => `
+        <article class="latest-rail-item">
+          <span>${formatDate(post.date)}</span>
+          <h2>${escapeHtml(post.title)}</h2>
+          <button class="read-button" type="button" data-post-id="${post.id}">阅读全文</button>
+        </article>
+      `
+    )
+    .join("");
+}
+
 function openPost(post) {
   const [artA, artB, artC] = post.colors;
   dialogContent.innerHTML = `
@@ -264,6 +283,13 @@ postGrid.addEventListener("click", (event) => {
   if (post) openPost(post);
 });
 
+latestRail?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-post-id]");
+  if (!button) return;
+  const post = posts.find((item) => item.id === button.dataset.postId);
+  if (post) openPost(post);
+});
+
 featuredButton.addEventListener("click", () => {
   openPost(posts[0]);
 });
@@ -287,4 +313,5 @@ window.addEventListener("resize", drawAmbientCanvas);
 renderPosts();
 renderComponents();
 renderTimeline();
+renderLatestRail();
 drawAmbientCanvas();

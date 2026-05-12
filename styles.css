@@ -1529,3 +1529,695 @@ h4.article-heading {
     transition: none !important;
   }
 }
+
+/* Claude-inspired editorial layer */
+:root {
+  --ink: #191714;
+  --muted: #6f6860;
+  --paper: #f6f0e7;
+  --paper-strong: #fffaf2;
+  --line: rgba(25, 23, 20, 0.16);
+  --teal: #556f5a;
+  --coral: #d97757;
+  --mustard: #b8873b;
+  --leaf: #788c5d;
+  --berry: #8c6577;
+  --clay: #d97757;
+  --oat: #e7d8c5;
+  --stone: #ded6ca;
+  --shadow: 0 0 0 rgba(25, 23, 20, 0);
+  --content-max: 1440px;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  line-height: 1.52;
+}
+
+#ambient-canvas {
+  display: none;
+}
+
+.site-header {
+  padding: 1.05rem clamp(1rem, 4vw, 4rem);
+  border-bottom: 1px solid var(--line);
+  background: rgba(246, 240, 231, 0.94);
+  backdrop-filter: blur(18px);
+}
+
+.brand {
+  font-weight: 700;
+}
+
+.brand-mark {
+  width: 1.95rem;
+  height: 1.95rem;
+  border-radius: 0.48rem;
+  background: var(--clay);
+  color: #fffaf2;
+  font-family: Georgia, "Songti SC", serif;
+  font-size: 1.05rem;
+}
+
+.nav-links {
+  gap: clamp(0.9rem, 2.6vw, 2.2rem);
+  color: #4c4741;
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.nav-links a::after {
+  bottom: -0.45rem;
+  height: 1px;
+  background: var(--ink);
+}
+
+.hero {
+  display: grid;
+  max-width: var(--content-max);
+  min-height: min(78vh, 720px);
+  margin: 0 auto;
+  grid-template-columns: minmax(0, 0.92fr) minmax(23rem, 1.08fr);
+  gap: clamp(2rem, 7vw, 7rem);
+  align-items: end;
+  border-bottom: 1px solid var(--line);
+  padding: clamp(5rem, 10vw, 8rem) clamp(1rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+}
+
+.hero-content {
+  width: 100%;
+  padding-bottom: 0.55rem;
+}
+
+.eyebrow,
+.resource-kicker {
+  color: var(--clay);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+h1,
+.component-hero-card h1 {
+  font-family: Georgia, "Songti SC", "STSong", serif;
+  font-size: clamp(4.8rem, 14vw, 13rem);
+  font-weight: 500;
+  line-height: 0.88;
+}
+
+.hero-copy {
+  width: min(34rem, 100%);
+  color: #3b3732;
+  font-family: inherit;
+  font-size: clamp(1.1rem, 2vw, 1.45rem);
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.hero-actions {
+  gap: 0.7rem;
+  margin-top: 1.6rem;
+}
+
+.primary-action,
+.secondary-action,
+.feature-button,
+.newsletter button {
+  min-height: 2.7rem;
+  border-radius: 0.68rem;
+  font-weight: 650;
+}
+
+.primary-action,
+.feature-button,
+.newsletter button {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper-strong);
+}
+
+.secondary-action {
+  border-color: var(--line);
+  background: transparent;
+  color: var(--ink);
+}
+
+.hero-category-list {
+  display: grid;
+  border-top: 1px solid var(--line);
+}
+
+.hero-category-list a {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: baseline;
+  border-bottom: 1px solid var(--line);
+  padding: clamp(1rem, 2.4vw, 1.45rem) 0;
+}
+
+.hero-category-list span,
+.latest-rail-item span,
+.post-meta,
+.component-card-body > span,
+.component-sidebar a span,
+.component-summary-grid span,
+.component-bridge span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: none;
+}
+
+.hero-category-list strong {
+  font-family: Georgia, "Songti SC", serif;
+  font-size: clamp(2rem, 5vw, 4.8rem);
+  font-weight: 500;
+  line-height: 0.96;
+}
+
+.hero-category-list em {
+  color: var(--muted);
+  font-style: normal;
+  font-weight: 600;
+}
+
+.hero-category-list a:hover strong,
+.hero-category-list a:focus-visible strong {
+  color: var(--clay);
+}
+
+.latest-rail {
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+  background: #efe5d8;
+}
+
+.latest-rail-track {
+  display: flex;
+  width: max-content;
+  animation: latestRail 56s linear infinite;
+}
+
+.latest-rail:hover .latest-rail-track,
+.latest-rail:focus-within .latest-rail-track {
+  animation-play-state: paused;
+}
+
+.latest-rail-item {
+  position: relative;
+  display: grid;
+  width: min(24rem, 82vw);
+  min-height: 10.5rem;
+  align-content: space-between;
+  border-right: 1px solid var(--line);
+  padding: 1rem;
+}
+
+.latest-rail-item h2 {
+  margin: 0;
+  font-family: Georgia, "Songti SC", serif;
+  font-size: clamp(1.15rem, 2vw, 1.55rem);
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+@keyframes latestRail {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.intro-band,
+.method-section,
+.knowledge-section,
+.content-section,
+.feature-band,
+.about-section,
+.newsletter {
+  padding: clamp(3.5rem, 7vw, 6rem) clamp(1rem, 5vw, 4rem);
+}
+
+.intro-band {
+  background: var(--ink);
+}
+
+.intro-grid,
+.method-section,
+.knowledge-section,
+.content-section,
+.split-section,
+.newsletter {
+  max-width: var(--content-max);
+}
+
+.intro-grid {
+  gap: 0;
+  border: 1px solid rgba(255, 250, 242, 0.18);
+  background: transparent;
+}
+
+.intro-grid article {
+  border-right: 1px solid rgba(255, 250, 242, 0.18);
+  background: transparent;
+}
+
+.intro-grid article:last-child {
+  border-right: 0;
+}
+
+.intro-grid h2,
+.method-grid h3,
+.track-card h3,
+.component-card h3,
+.post-card h3,
+.component-bridge h3,
+.outcome-panel h3 {
+  font-family: Georgia, "Songti SC", serif;
+  font-weight: 500;
+}
+
+.section-heading h2,
+.feature-copy h2,
+.split-section h2,
+.about-section h2,
+.newsletter h2,
+.method-section h2 {
+  font-family: Georgia, "Songti SC", serif;
+  font-weight: 500;
+  line-height: 0.98;
+}
+
+.roadmap-panel,
+.outcome-panel,
+.track-card,
+.component-bridge article,
+.component-card,
+.post-card,
+.posts-guide,
+.method-grid article,
+.insight-grid section {
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: rgba(255, 250, 242, 0.52);
+  box-shadow: none;
+}
+
+.track-card,
+.component-card,
+.post-card {
+  transition:
+    background-color 220ms ease,
+    border-color 220ms ease,
+    transform 220ms ease;
+}
+
+.track-card:hover,
+.component-card:hover,
+.post-card:hover {
+  border-color: rgba(217, 119, 87, 0.5);
+  background: rgba(255, 250, 242, 0.78);
+  transform: translateY(-2px);
+}
+
+.track-columns section {
+  border: 1px solid rgba(25, 23, 20, 0.1);
+  background: rgba(217, 119, 87, 0.07);
+}
+
+.track-columns section:nth-child(2) {
+  background: rgba(120, 140, 93, 0.1);
+}
+
+.track-columns section:nth-child(3) {
+  background: rgba(184, 135, 59, 0.11);
+}
+
+.doc-links a,
+.guide-filter,
+.filter-pill,
+.topic-list span {
+  border-radius: 0.75rem;
+  border-color: var(--line);
+  background: transparent;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.doc-links a:hover,
+.guide-filter:hover,
+.filter-pill.active,
+.filter-pill:hover {
+  border-color: var(--clay);
+  background: rgba(217, 119, 87, 0.1);
+  color: var(--ink);
+}
+
+.filter-pill.active {
+  background: var(--ink);
+  color: var(--paper-strong);
+}
+
+.component-art,
+.post-art,
+.dialog-hero {
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--art-a) 78%, #fffaf2), transparent 58%),
+    linear-gradient(135deg, var(--art-b), color-mix(in srgb, var(--art-c) 76%, #191714));
+}
+
+.component-art,
+.post-art {
+  min-height: 8.5rem;
+}
+
+.post-art::before,
+.post-art::after {
+  display: none;
+}
+
+.post-card,
+.component-card {
+  min-height: auto;
+}
+
+.post-body,
+.component-card-body {
+  gap: 1.25rem;
+  padding: 1.1rem;
+}
+
+.post-card h3,
+.component-card h3 {
+  font-size: clamp(1.35rem, 2.2vw, 1.9rem);
+  line-height: 1.08;
+}
+
+.post-card p,
+.component-card p,
+.track-card p,
+.section-note,
+.knowledge-heading > p,
+.roadmap-list span,
+.outcome-panel li,
+.component-bridge p,
+.article-content p,
+.article-content li {
+  color: #4b453f;
+  font-weight: 500;
+}
+
+.post-signals span {
+  border-left: 0;
+  border-radius: 0.8rem;
+  background: rgba(25, 23, 20, 0.05);
+  color: #4b453f;
+  font-weight: 600;
+}
+
+.post-signals span + span {
+  background: rgba(217, 119, 87, 0.09);
+}
+
+.read-button,
+.component-link {
+  border: 1px solid var(--line);
+  border-radius: 0.68rem;
+  background: transparent;
+  padding: 0.58rem 0.82rem;
+  font-weight: 650;
+}
+
+.read-button:hover,
+.component-link:hover {
+  border-color: var(--clay);
+  background: rgba(217, 119, 87, 0.1);
+}
+
+.posts-guide {
+  gap: 0;
+  border-radius: 1rem;
+  background: transparent;
+}
+
+.posts-guide article {
+  border-right: 1px solid var(--line);
+  background: rgba(255, 250, 242, 0.5);
+}
+
+.posts-guide article:last-child {
+  border-right: 0;
+}
+
+.search-box input,
+.newsletter input {
+  border-radius: 0.75rem;
+  background: rgba(255, 250, 242, 0.62);
+}
+
+.feature-band {
+  background: var(--ink);
+}
+
+.about-section {
+  background: #e8dece;
+}
+
+.portrait {
+  border-radius: 1rem;
+  background: var(--clay);
+  box-shadow: none;
+}
+
+.post-dialog {
+  border-radius: 1rem;
+  background: var(--paper-strong);
+}
+
+.dialog-close {
+  border-radius: 0.75rem;
+}
+
+.component-layout {
+  max-width: var(--content-max);
+  grid-template-columns: minmax(13rem, 17rem) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+}
+
+.component-sidebar,
+.component-summary-grid section,
+.component-scheme-card,
+.component-content,
+.component-hero-card {
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: rgba(255, 250, 242, 0.64);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.component-sidebar {
+  background: rgba(246, 240, 231, 0.94);
+}
+
+.component-sidebar a {
+  border-radius: 0.75rem;
+  font-weight: 600;
+}
+
+.component-sidebar a.active,
+.component-sidebar a:hover {
+  background: rgba(217, 119, 87, 0.11);
+}
+
+.component-hero-card {
+  background:
+    linear-gradient(135deg, rgba(255, 250, 242, 0.62), rgba(255, 250, 242, 0.22)),
+    linear-gradient(135deg, var(--art-b), var(--art-c));
+}
+
+.component-hero-card h1 {
+  font-size: clamp(3.4rem, 9vw, 8.5rem);
+}
+
+.component-scheme-card pre,
+.component-scheme-card code {
+  white-space: pre-wrap;
+}
+
+.code-panel {
+  border-radius: 0.9rem;
+  background: #24211d;
+  box-shadow: none;
+}
+
+.article-content h2,
+.article-content h3 {
+  font-family: Georgia, "Songti SC", serif;
+  font-weight: 500;
+}
+
+.article-content blockquote {
+  border-left-color: var(--clay);
+  border-radius: 0 0.75rem 0.75rem 0;
+  background: rgba(217, 119, 87, 0.08);
+}
+
+@media (max-width: 980px) {
+  .hero {
+    min-height: auto;
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .hero-category-list a {
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+  }
+
+  .hero-category-list em {
+    grid-column: 2;
+  }
+}
+
+@media (max-width: 720px) {
+  .site-header {
+    position: sticky;
+  }
+
+  .hero {
+    padding-top: 3.5rem;
+  }
+
+  h1,
+  .component-hero-card h1 {
+    font-size: clamp(4.2rem, 22vw, 7rem);
+  }
+
+  .hero-category-list strong {
+    font-size: clamp(1.9rem, 11vw, 3.5rem);
+  }
+
+  .intro-grid article,
+  .posts-guide article {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .intro-grid article:last-child,
+  .posts-guide article:last-child {
+    border-bottom: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .latest-rail-track {
+    animation: none;
+  }
+}
+
+/* Typography pass: Claude-like sans + humanist serif pairing */
+:root {
+  --font-sans: "Anthropic Sans", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-serif: "Anthropic Serif", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia,
+    "Noto Serif CJK SC", "Source Han Serif SC", "Songti SC", "STSong", "SimSun", serif;
+  --font-mono: "SFMono-Regular", "JetBrains Mono", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-synthesis-weight: none;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+.hero-category-list strong,
+.latest-rail-item h2,
+.intro-grid h2,
+.method-grid h3,
+.track-card h3,
+.component-card h3,
+.post-card h3,
+.component-bridge h3,
+.outcome-panel h3,
+.section-heading h2,
+.feature-copy h2,
+.split-section h2,
+.about-section h2,
+.newsletter h2,
+.method-section h2,
+.component-hero-card h1,
+.dialog-body h2,
+.article-heading,
+.article-content h2,
+.article-content h3,
+.portrait span {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+.hero-copy,
+.dialog-body blockquote {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  letter-spacing: 0;
+  text-wrap: pretty;
+}
+
+.brand,
+.nav-links,
+.eyebrow,
+.resource-kicker,
+.post-meta,
+.filter-pill,
+.guide-filter,
+.read-button,
+.component-link,
+.doc-links a,
+.component-sidebar a,
+.component-card-body > span,
+.component-summary-grid span,
+.component-bridge span,
+.newsletter button,
+.primary-action,
+.secondary-action,
+.feature-button {
+  font-family: var(--font-sans);
+  letter-spacing: 0;
+}
+
+.code-panel code,
+.component-scheme-card code,
+code,
+kbd,
+pre,
+samp {
+  font-family: var(--font-mono);
+}
+
+.post-card p,
+.component-card p,
+.track-card p,
+.section-note,
+.knowledge-heading > p,
+.roadmap-list span,
+.outcome-panel li,
+.component-bridge p,
+.article-content p,
+.article-content li,
+.track-columns li,
+.doc-links a,
+.component-summary-grid p,
+.component-scheme-card p {
+  text-wrap: pretty;
+}
