@@ -85,10 +85,10 @@ function renderPosts() {
   });
 
   postGrid.innerHTML = visiblePosts
-    .map((post) => {
+    .map((post, index) => {
       const [artA, artB, artC] = post.colors;
       return `
-        <article class="post-card">
+        <article class="post-card ${index === 0 ? "is-featured" : ""}">
           <div class="post-art" style="--art-a: ${artA}; --art-b: ${artB}; --art-c: ${artC};"></div>
           <div class="post-body">
             <div>
@@ -118,10 +118,10 @@ function renderComponents() {
   if (!componentGrid) return;
 
   componentGrid.innerHTML = components
-    .map((component) => {
+    .map((component, index) => {
       const [artA, artB, artC] = component.colors;
       return `
-        <article class="component-card">
+        <article class="component-card ${index === 0 ? "is-featured" : ""}">
           <div class="component-art" style="--art-a: ${artA}; --art-b: ${artB}; --art-c: ${artC};"></div>
           <div class="component-card-body">
             <span>${escapeHtml(component.domain)}</span>
