@@ -1205,6 +1205,9 @@ h4.article-heading {
 
 .component-page {
   background: var(--paper);
+  min-height: 100dvh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .component-layout {
@@ -1220,6 +1223,9 @@ h4.article-heading {
   position: sticky;
   top: 5.5rem;
   height: fit-content;
+  max-height: calc(100dvh - 7rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   border: 1px solid rgba(23, 32, 29, 0.08);
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.72);
@@ -1256,6 +1262,7 @@ h4.article-heading {
 
 .component-article {
   min-width: 0;
+  overflow: visible;
 }
 
 .component-hero-card {
@@ -2721,7 +2728,7 @@ samp {
 html,
 body {
   max-width: 100%;
-  overflow-x: clip;
+  overflow-x: hidden;
 }
 
 img,
@@ -2969,6 +2976,9 @@ code {
   .component-sidebar {
     margin-bottom: 1rem;
     padding: 0.75rem 0;
+    max-height: none;
+    overflow: visible;
+    overscroll-behavior: auto;
     border: 0;
     border-top: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
@@ -2980,6 +2990,7 @@ code {
     display: flex;
     gap: 0.4rem;
     overflow-x: auto;
+    overflow-y: hidden;
     padding-bottom: 0.2rem;
     scrollbar-width: none;
   }
@@ -3025,7 +3036,9 @@ code {
   .component-scheme-card code {
     font-size: 0.8rem;
     line-height: 1.55;
-    white-space: pre;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 
   .post-dialog {
@@ -3433,12 +3446,71 @@ h1 {
 }
 
 @media (max-width: 820px) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  *,
+  *::before,
+  *::after {
+    min-width: 0;
+  }
+
   .site-header {
     align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .brand {
+    max-width: 100%;
+  }
+
+  .brand span:last-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .nav-links {
+    min-width: 0;
   }
 
   .hero {
     padding-top: 2.6rem;
+  }
+
+  .hero,
+  .hero-content,
+  .hero-category-list,
+  .intro-grid,
+  .method-grid,
+  .knowledge-shell,
+  .track-grid,
+  .track-card,
+  .track-card > div:first-child,
+  .track-columns,
+  .doc-links,
+  .content-section,
+  .component-bridge,
+  .component-grid,
+  .posts-guide,
+  .post-grid,
+  .post-card,
+  .component-card,
+  .split-section,
+  .about-section,
+  .newsletter,
+  .component-layout,
+  .component-article,
+  .component-hero-card,
+  .component-summary-grid,
+  .component-scheme,
+  .component-scheme-card,
+  .component-content,
+  .article-content {
+    max-width: 100%;
+    overflow-wrap: anywhere;
   }
 
   h1,
@@ -3466,5 +3538,93 @@ h1 {
   .component-art,
   .post-art {
     min-height: 10rem;
+  }
+
+  .component-sidebar nav,
+  .filter-row,
+  .topic-list,
+  .latest-rail-track {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .component-page {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .component-layout {
+    display: block;
+    min-height: auto;
+    overflow: visible;
+  }
+
+  .component-article {
+    overflow: visible;
+  }
+
+  .component-sidebar nav {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .component-sidebar a {
+    min-width: min(8.5rem, 74vw);
+    max-width: 74vw;
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  .component-scheme-card pre,
+  .code-panel pre {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    overflow-y: visible;
+  }
+
+  .component-scheme-card code,
+  .code-panel code {
+    display: block;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .article-list {
+    padding-left: 1rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .site-header {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .nav-links {
+    margin-right: -0.85rem;
+    margin-left: -0.85rem;
+    padding-right: 0.85rem;
+    padding-left: 0.85rem;
+  }
+
+  .hero-category-list a {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hero-category-list span {
+    grid-column: auto;
+    grid-row: auto;
+    justify-self: start;
+    order: -1;
+  }
+
+  .latest-rail-item {
+    width: 88vw;
+    flex-basis: 88vw;
   }
 }
