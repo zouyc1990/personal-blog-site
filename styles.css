@@ -2716,3 +2716,369 @@ samp {
 .component-scheme-card p {
   text-wrap: pretty;
 }
+
+/* Mobile hardening: keep every viewport readable from 320px up */
+html,
+body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+img,
+svg,
+canvas,
+video,
+iframe,
+pre,
+code {
+  max-width: 100%;
+}
+
+@media (max-width: 820px) {
+  .site-header {
+    position: sticky;
+    top: 0;
+    gap: 0.75rem;
+    align-items: flex-start;
+    padding: 0.8rem 1rem;
+  }
+
+  .brand {
+    min-width: 0;
+  }
+
+  .nav-links {
+    width: 100%;
+    gap: 0.35rem;
+    overflow-x: auto;
+    padding-bottom: 0.15rem;
+    scrollbar-width: none;
+    white-space: nowrap;
+  }
+
+  .nav-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-links a {
+    flex: 0 0 auto;
+    border: 1px solid rgba(25, 23, 20, 0.12);
+    border-radius: 999px;
+    padding: 0.38rem 0.62rem;
+    background: rgba(255, 250, 242, 0.45);
+    font-size: 0.86rem;
+  }
+
+  .nav-links a::after {
+    display: none;
+  }
+
+  .hero,
+  .intro-band,
+  .method-section,
+  .knowledge-section,
+  .content-section,
+  .feature-band,
+  .about-section,
+  .newsletter,
+  .component-layout {
+    width: 100%;
+    max-width: 100%;
+    padding-right: clamp(1rem, 5vw, 1.35rem);
+    padding-left: clamp(1rem, 5vw, 1.35rem);
+  }
+
+  .hero {
+    gap: 2rem;
+    padding-top: clamp(2.2rem, 9vw, 4rem);
+    padding-bottom: clamp(2.2rem, 9vw, 4rem);
+  }
+
+  h1,
+  .component-hero-card h1 {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    font-size: clamp(3.15rem, 18vw, 5.8rem);
+    line-height: 0.94;
+  }
+
+  .hero-copy {
+    max-width: 100%;
+    font-size: clamp(1.04rem, 4.7vw, 1.28rem);
+  }
+
+  .hero-actions {
+    width: 100%;
+    gap: 0.55rem;
+  }
+
+  .primary-action,
+  .secondary-action {
+    flex: 1 1 9rem;
+    justify-content: center;
+    padding: 0.65rem 0.8rem;
+  }
+
+  .hero-category-list a {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.6rem;
+    padding: 1rem 0;
+  }
+
+  .hero-category-list strong {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    font-size: clamp(1.9rem, 11vw, 3.4rem);
+    line-height: 1;
+  }
+
+  .latest-rail-track {
+    width: 100%;
+    animation: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+
+  .latest-rail-item {
+    width: min(82vw, 22rem);
+    min-height: 9.5rem;
+    flex: 0 0 min(82vw, 22rem);
+    scroll-snap-align: start;
+  }
+
+  .intro-grid,
+  .method-grid,
+  .knowledge-shell,
+  .track-columns,
+  .doc-links,
+  .component-bridge,
+  .component-grid,
+  .posts-guide,
+  .post-grid,
+  .insight-grid,
+  .component-summary-grid,
+  .newsletter form,
+  .split-section,
+  .about-section,
+  .component-layout,
+  .component-scheme {
+    grid-template-columns: 1fr !important;
+  }
+
+  .knowledge-section,
+  .content-section {
+    display: block;
+  }
+
+  .knowledge-heading,
+  .section-heading,
+  .component-sidebar {
+    position: static;
+  }
+
+  .section-heading,
+  .knowledge-heading {
+    margin-bottom: 1.4rem;
+  }
+
+  .section-heading h2,
+  .feature-copy h2,
+  .split-section h2,
+  .about-section h2,
+  .newsletter h2,
+  .method-section h2 {
+    font-size: clamp(2rem, 12vw, 3.4rem);
+    line-height: 1;
+  }
+
+  .track-card > div:first-child {
+    display: block;
+  }
+
+  .track-card h3 {
+    max-width: 100%;
+    font-size: clamp(1.8rem, 10vw, 3rem);
+  }
+
+  .track-columns section {
+    padding: 0.9rem 0;
+    border-right: 0;
+    border-left: 0;
+  }
+
+  .component-card,
+  .post-card,
+  .component-card.is-featured,
+  .post-card.is-featured {
+    min-height: auto;
+    gap: 1rem;
+    grid-template-columns: 1fr;
+    padding: 1.2rem 0;
+  }
+
+  .component-card:nth-child(2n),
+  .post-card:nth-child(2n) {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .component-card.is-featured .component-art,
+  .post-card.is-featured .post-art,
+  .component-art,
+  .post-art {
+    min-height: 11rem;
+  }
+
+  .component-card.is-featured h3,
+  .post-card.is-featured h3,
+  .component-card:not(.is-featured) h3,
+  .post-card:not(.is-featured) h3 {
+    font-size: clamp(1.55rem, 8vw, 2.5rem);
+    line-height: 1.05;
+  }
+
+  .filter-row,
+  .topic-list {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 0.4rem;
+    scrollbar-width: none;
+  }
+
+  .filter-row::-webkit-scrollbar,
+  .topic-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter-pill,
+  .topic-list span {
+    flex: 0 0 auto;
+  }
+
+  .feature-band,
+  .newsletter {
+    align-items: start;
+  }
+
+  .feature-button,
+  .newsletter button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .component-sidebar {
+    margin-bottom: 1rem;
+    padding: 0.75rem 0;
+    border: 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .component-sidebar nav {
+    display: flex;
+    gap: 0.4rem;
+    overflow-x: auto;
+    padding-bottom: 0.2rem;
+    scrollbar-width: none;
+  }
+
+  .component-sidebar nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .component-sidebar a {
+    min-width: 8.5rem;
+    flex: 0 0 auto;
+    border: 1px solid var(--line);
+    background: rgba(255, 250, 242, 0.44);
+  }
+
+  .component-hero-card,
+  .component-content,
+  .component-summary-grid section,
+  .component-scheme-card {
+    border-radius: 0.85rem;
+    padding: 1rem;
+  }
+
+  .component-hero-card p,
+  .component-summary-grid p,
+  .component-scheme-card p,
+  .article-content p,
+  .article-content li {
+    font-size: 0.98rem;
+  }
+
+  .code-panel,
+  .component-scheme-card pre {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .code-panel pre {
+    padding: 0.85rem;
+  }
+
+  .code-panel code,
+  .component-scheme-card code {
+    font-size: 0.8rem;
+    line-height: 1.55;
+    white-space: pre;
+  }
+
+  .post-dialog {
+    width: min(100vw - 1rem, 920px);
+    max-height: calc(100dvh - 1rem);
+    border-radius: 0.85rem;
+  }
+
+  .dialog-body {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .site-header {
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+  }
+
+  .hero,
+  .intro-band,
+  .method-section,
+  .knowledge-section,
+  .content-section,
+  .feature-band,
+  .about-section,
+  .newsletter,
+  .component-layout {
+    padding-right: 0.85rem;
+    padding-left: 0.85rem;
+  }
+
+  h1,
+  .component-hero-card h1 {
+    font-size: clamp(2.8rem, 17vw, 4.6rem);
+  }
+
+  .hero-category-list strong {
+    font-size: clamp(1.65rem, 10vw, 2.8rem);
+  }
+
+  .hero-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .primary-action,
+  .secondary-action {
+    width: 100%;
+  }
+
+  .latest-rail-item {
+    width: 86vw;
+    flex-basis: 86vw;
+  }
+}
